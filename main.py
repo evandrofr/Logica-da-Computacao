@@ -36,7 +36,7 @@ if __name__ == "__main__":
             num += int(alg)*10**(len(temp) - idx - 1)
         lista_operacao += [num]
         temp = []
-    print("lista_operacao", lista_operacao)
+    print("Lista de operações: ", lista_operacao)
 
 
 
@@ -52,13 +52,12 @@ if __name__ == "__main__":
         quit()
 
     for index, item in enumerate(lista_operacao):
-        if isinstance(item, int):
-            if index < len(lista_operacao) - 1: # Verificação feita para evitar que não se estore o index da lista
+        if index < len(lista_operacao) - 1: # Verificação feita para evitar que não se estore o index da lista
+            if isinstance(item, int):    
                 if isinstance(lista_operacao[index + 1], int):
                     print("Error. Não entendo dois numeros seguidos.")
                     quit()
-        if type(item) == str:
-            if index < len(lista_operacao) - 1: # Verificação feita para evitar que não se estore o index da lista
+            if type(item) == str:
                 if type(lista_operacao[index + 1]) == str:
                     print("Error. Não entendo dois sinais seguidos.")
                     quit()
