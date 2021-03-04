@@ -71,4 +71,4 @@ class Parser:
         Parser.tokenizer = Tokenizer(code)
         return Parser.parserExpression()
 
-print(Parser.run("1  +2 + 3-  1 -  2    -   3    +               1"))
+print(Parser.run("1  +2 + 3-  1 -  2    -   3    + 1"))
