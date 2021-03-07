@@ -9,3 +9,5 @@ Questionário
 - O resultado está incorreto pois nosso compilador é sequencial, logo ele faz as operações na ordem em que aparecem. Dessa forma as operações de multiplicação e divisão não são priorizadas.
 
 2. Sugira a correção no diagrama sintático (não precisa implementar).
+- Eu sugiro a criação de um segundo diagrama sintático com as operação de multiplicação e divisão que ocorre antes do diagrama
+com a soma e subtração.
