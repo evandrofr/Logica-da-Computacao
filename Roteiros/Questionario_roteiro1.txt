@@ -1,0 +1,11 @@
+Questionário
+1. Nosso compilador é de 1 passagem ou múltiplas passagens? Justifique.
+- Nosso compilador realiza apenas 1 passagem, pois ele percorre apenas uma vez nosso código (string passada). Uma vez passado pela sinal de operação, nunca mais passamos por ele novamente.
+
+2. Colocar as operações de MULTIPLICAÇÃO e DIVISÃO e testar:
+>> 4/2+3
+>> 2 + 3 * 5
+1. Explique por que o resultado está incorreto.
+- O resultado está incorreto pois nosso compilador é sequencial, logo ele faz as operações na ordem em que aparecem. Dessa forma as operações de multiplicação e divisão não são priorizadas.
+
+2. Sugira a correção no diagrama sintático (não precisa implementar).

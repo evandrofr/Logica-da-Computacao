@@ -8,3 +8,6 @@ Para utilizar o compilador basta utilizar o comando abaixo em seu prompt de coma
 Exemplo:<br>
 
 `python main.py "23+ 17   - 28"`
+
+## Diagrama Sintático
+<img src="Imagens/diagrama_sintatico.png">
