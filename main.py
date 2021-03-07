@@ -1,88 +1,100 @@
 from sys import argv
+class Token:
+    
+    """
+    TIPOS DE TOKENS:
+    - INT
+    - PLUS
+    - MINUS
+    - EOF (end of file)
+    """
+    def __init__(self, token_type, token_value):
+        self.type = token_type
+        self.value = token_value
 
-if __name__ == "__main__":
-    '''
-    Primeiro loop tem o objetivo de separar os números e sinais, colocando-os em uma lista de operações no formato:
-    [10, "+", 213, "-" 934]
-    Sendo os números inteiros e os sinais strings.
-    Isso é feito atraves de verificação individuais dos caracteres. Caso seja um digito é colocado em uma lista
-    temporária até que se encontre um caractere não digito. Quando isso ocorre somasse os números da lista temporária
-    considerando suas posições (multiplicando por 10**n) e então colocando-os na lista de operações.
-    Quando um sinal é encontrado, ele é colocado diretamente na lista de operações.
-    '''
+class Tokenizer:
+    def __init__(self, origin):
+        self.origin = origin
+        self.position = 0
+        self.actual = self.selectNext()
 
-    string = argv[1] # Pegar argumentos da chamada do programa
-    lista_operacao = []
-    temp = []
-    for char in string:
-        if char.isdigit():
-            temp += [char]
-        else:
-            num = 0
-            for idx, alg in enumerate(temp):
-                num += int(alg)*10**(len(temp) - idx - 1)
-            if temp != []:    
-                lista_operacao += [num]
-                temp = []
-            if char == "+":
-                lista_operacao += ["+"]
-            if char == "-":
-                lista_operacao += ["-"]
 
-    # if final para considerar o último digito do último número.            
-    if char.isdigit():
-        num = 0
-        for idx, alg in enumerate(temp):
-            num += int(alg)*10**(len(temp) - idx - 1)
-        lista_operacao += [num]
+    """
+    Função que identifica Tokens
+    """
+    def selectNext(self):
+        size = len(self.origin)
+        numero = 0
         temp = []
-    print("Lista de operações: ", lista_operacao)
+        while self.position < size and self.origin[self.position].isspace():
+            self.position += 1
+        if self.position == size:
+            self.actual = Token('EOF', 'end')
+        elif self.origin[self.position].isdigit():
+            while self.position < size and self.origin[self.position].isdigit():
+                temp += [self.origin[self.position]]
+                self.position += 1
+            for idx, alg in enumerate(temp):
+                numero += int(alg)*10**(len(temp) - idx - 1)
+            self.actual = Token('INT', numero)
+        elif self.position < size:
+            if self.origin[self.position] == '-':
+                self.actual = Token('MINUS', '-')
+                self.position += 1
+            if self.origin[self.position] == '+':
+                self.actual = Token('PLUS', '+')
+                self.position += 1
+        return self.actual
 
+class Parser:
+    """
+    Função que realiza o diagrama sintático
+    Verificar se o primeiro Token é um número, após isso o próximo token deve ser um sinal.
+    Loop de verificação de sinal: caso o sinal seja encontrado devemos identifica-lo, procurar por um número após ele
+    e realizar a operação.
+    """
 
+    def parserExpression():
+        if Parser.tokenizer.actual.type == 'INT':
+            # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+            resultado = Parser.tokenizer.actual.value
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'INT':
+                raise NameError('Erro sinal não encontrado')
+            # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+            while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS':
+                if Parser.tokenizer.actual.type == 'PLUS':
+                    Parser.tokenizer.selectNext()
+                    # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+                    if Parser.tokenizer.actual.type == 'INT':
+                        resultado = resultado + Parser.tokenizer.actual.value
+                    else:
+                        raise NameError('Erro ao somar')
+                elif Parser.tokenizer.actual.type == 'MINUS':
+                    Parser.tokenizer.selectNext()
+                    # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+                    if Parser.tokenizer.actual.type == 'INT':
+                        resultado = resultado - Parser.tokenizer.actual.value
+                    else:
+                        raise NameError('Erro ao subtrair')
+                Parser.tokenizer.selectNext()
+                # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+            if Parser.tokenizer.actual.type == 'INT':
+                raise NameError('Erro: sinal não encontrado')
+            if Parser.tokenizer.actual.type == 'EOF':
+                return resultado
+            else:
+                raise NameError('Erro: final da operação não encontrado')
+        else:
+            raise NameError('Erro: expressão não iniciada com um número')
+        
+    """
+    Função que recebe o código que deve ser executado e chama o parserExpression para verifica-lo.
+    """
+    def run(code):
+        Parser.tokenizer = Tokenizer(code)
+        return Parser.parserExpression()
 
-    '''
-    Verificação feita em cima da lista de operações. Procurasse números seguidos separados apenas por espaço
-    ou sinais na mesma situação. Também verificasse se não há sinais em lugares inadequados (começo e final da
-    expressão)
-    '''
-
-
-    if type(lista_operacao[0]) == str or type(lista_operacao[-1]) == str:
-        print("Error. Sinal em local inadequado.")
-        quit()
-
-    for index, item in enumerate(lista_operacao):
-        if index < len(lista_operacao) - 1: # Verificação feita para evitar que não se estore o index da lista
-            if isinstance(item, int):    
-                if isinstance(lista_operacao[index + 1], int):
-                    print("Error. Não entendo dois numeros seguidos.")
-                    quit()
-            if type(item) == str:
-                if type(lista_operacao[index + 1]) == str:
-                    print("Error. Não entendo dois sinais seguidos.")
-                    quit()
-
-
-    '''
-    Loop para efetuar as operações de fato.
-    Loop parte do pressuposto que a lista_operacao já está no formato correto, tendo os sinais nas posições impares
-    e os números em posições pares.
-    '''
-
-    soma = lista_operacao[0]
-    i = 1
-    while i < len(lista_operacao):
-        if lista_operacao[i] == '+':
-            soma += lista_operacao[i+1]
-        elif lista_operacao[i] == '-':
-            soma -= lista_operacao[i+1]
-        i += 2
-
-    print("Resultado: ", soma)
-
-
-
-
-
-
-
+if __name__ == "__main__": 
+    string = argv[1] # Pegar argumentos da chamada do programa
+    print(Parser.run(string))
