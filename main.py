@@ -1,4 +1,10 @@
+import re   
 from sys import argv
+
+class PreProc:
+    def filter_comment(code):
+        new_code = re.sub("[/][*]\s*([^'*/']*)\s*[*][/]", "", code)
+        return new_code
 class Token:
     
     """
@@ -114,8 +120,12 @@ class Parser:
     Função que recebe o código que deve ser executado e chama o parserExpression para verifica-lo.
     """
     def run(code):
-        Parser.tokenizer = Tokenizer(code)
+        new_code = PreProc.filter_comment(code)
+        Parser.tokenizer = Tokenizer(new_code)
         return Parser.parserExpression()
+
+
+
 
 if __name__ == "__main__": 
     string = argv[1] # Pegar argumentos da chamada do programa
