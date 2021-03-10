@@ -1,4 +1,4 @@
-# Logica-da-Computacao
+# Lógica da Computação
 Repositório privado para a entrega das atividades da disciplina de Lógica da Computação. 
 
 Para utilizar o compilador basta utilizar o comando abaixo em seu prompt de comando:<br>
