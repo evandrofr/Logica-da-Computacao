@@ -6,6 +6,8 @@ class Token:
     - INT
     - PLUS
     - MINUS
+    - MULT
+    - DIV
     - EOF (end of file)
     """
     def __init__(self, token_type, token_value):
@@ -44,6 +46,12 @@ class Tokenizer:
             if self.origin[self.position] == '+':
                 self.actual = Token('PLUS', '+')
                 self.position += 1
+            if self.origin[self.position] == '*':
+                self.actual = Token('MULT', '*')
+                self.position += 1
+            if self.origin[self.position] == '/':
+                self.actual = Token('DIV', '/')
+                self.position += 1
         return self.actual
 
 class Parser:
@@ -62,7 +70,7 @@ class Parser:
             if Parser.tokenizer.actual.type == 'INT':
                 raise NameError('Erro sinal não encontrado')
             # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
-            while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS':
+            while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS' or Parser.tokenizer.actual.type == 'MULT' or Parser.tokenizer.actual.type == 'DIV':
                 if Parser.tokenizer.actual.type == 'PLUS':
                     Parser.tokenizer.selectNext()
                     # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
@@ -77,6 +85,20 @@ class Parser:
                         resultado = resultado - Parser.tokenizer.actual.value
                     else:
                         raise NameError('Erro ao subtrair')
+                elif Parser.tokenizer.actual.type == 'MULT':
+                    Parser.tokenizer.selectNext()
+                    # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+                    if Parser.tokenizer.actual.type == 'INT':
+                        resultado = resultado * Parser.tokenizer.actual.value
+                    else:
+                        raise NameError('Erro ao multiplicar')
+                elif Parser.tokenizer.actual.type == 'DIV':
+                    Parser.tokenizer.selectNext()
+                    # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
+                    if Parser.tokenizer.actual.type == 'INT':
+                        resultado = resultado / Parser.tokenizer.actual.value
+                    else:
+                        raise NameError('Erro ao dividir')
                 Parser.tokenizer.selectNext()
                 # print(Parser.tokenizer.actual.type, Parser.tokenizer.actual.value, "\n")
             if Parser.tokenizer.actual.type == 'INT':
