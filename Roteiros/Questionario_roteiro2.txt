@@ -1,0 +1,10 @@
+1. Testar:
+>> -2+3
+1. Qual é o erro apontado no compilador? E por que deu erro?
+- O erro indica que a expressão não foi inicia por um número. Isso ocorre pois nosso diagrama sintátio preve que o primeiro
+termo encontrado sempre será um número.
+
+2. Se quiséssemos realizar a operação de SOMA antes de uma MULT, naturalmente usaríamos parênteses.
+Sugira correções na EBNF para contemplar parênteses.
+- Seria necessário mais um diagrama que procura os paranteses antes dos sinais de operação, da mesma forma que criamos
+um Term antes do Expression.

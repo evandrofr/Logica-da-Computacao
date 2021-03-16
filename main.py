@@ -10,7 +10,7 @@ class PreProc:
     para então procurar pela sequencia '*/'.
     """
     def filter_comment(code):
-        new_code = re.sub("[/][*]\s*([^'*/']*)\s*[*][/]", "", code)
+        new_code = re.sub("[/][*]\s*(.*)\s*[*][/]", "", code)
         return new_code
 class Token:
     
