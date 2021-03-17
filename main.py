@@ -10,7 +10,7 @@ class PreProc:
     para então procurar pela sequencia '*/'.
     """
     def filter_comment(code):
-        new_code = re.sub("[/][*]\s*(.*)\s*[*][/]", "", code)
+        new_code = re.sub("[/][*]\s*(.*?)\s*[*][/]", "", code)
         return new_code
 class Token:
     
@@ -87,7 +87,7 @@ class Parser:
                 elif Parser.tokenizer.actual.type == 'DIV':
                     Parser.tokenizer.selectNext()
                     if Parser.tokenizer.actual.type == 'INT':
-                        resultado = resultado / Parser.tokenizer.actual.value
+                        resultado = resultado // Parser.tokenizer.actual.value
                     else:
                         raise ValueError("Erro ao dividir")
                 Parser.tokenizer.selectNext()
