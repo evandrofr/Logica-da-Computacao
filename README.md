@@ -7,7 +7,13 @@ Para utilizar o compilador basta utilizar o comando abaixo em seu prompt de coma
 
 Exemplo:<br>
 
-`python main.py "23+ 17   - 28"`
+`python main.py "23+18/2 - 15*2"`
 
 ## Diagrama Sintático
 <img src="Imagens/diagrama_sintatico.png">
+
+## EBNF
+```
+EXPRESSION = TERM, {("+"|"-"), TERM};
+TERM = NUM, {("*"|"/"), NUM};
+```
