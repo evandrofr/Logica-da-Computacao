@@ -109,16 +109,11 @@ class Parser:
         while Parser.tokenizer.actual.type == 'MULT' or Parser.tokenizer.actual.type == 'DIV':
             if Parser.tokenizer.actual.type == 'MULT':
                 Parser.tokenizer.selectNext()
-                if Parser.tokenizer.actual.type == 'INT':
-                    resultado = resultado * Parser.parserFactor()
-                else:
-                    raise NameError("Erro ao multiplicar")
+                resultado = resultado * Parser.parserFactor()
+
             elif Parser.tokenizer.actual.type == 'DIV':
                 Parser.tokenizer.selectNext()
-                if Parser.tokenizer.actual.type == 'INT':
-                    resultado = resultado // Parser.parserFactor()
-                else:
-                    raise NameError("Erro ao dividir")
+                resultado = resultado // Parser.parserFactor()
 
         return resultado
 
@@ -138,16 +133,11 @@ class Parser:
         while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS':
             if Parser.tokenizer.actual.type == 'PLUS':
                 Parser.tokenizer.selectNext()
-                if Parser.tokenizer.actual.type == 'INT':
-                    resultado = resultado + Parser.parserTerm()
-                else:
-                    raise NameError('Erro ao somar')
+                resultado = resultado + Parser.parserTerm()
+
             elif Parser.tokenizer.actual.type == 'MINUS':
                 Parser.tokenizer.selectNext()
-                if Parser.tokenizer.actual.type == 'INT':
-                    resultado = resultado - Parser.parserTerm()
-                else:
-                    raise NameError('Erro ao subtrair')
+                resultado = resultado - Parser.parserTerm()
         return resultado
         
     """
