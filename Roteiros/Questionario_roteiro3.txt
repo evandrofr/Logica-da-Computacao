@@ -1,0 +1,19 @@
+Questionário
+1. Qual a diferença da notação Prefix, Infix e Postfix?
+- A diferença é a posição do sinal em relação aos operandos ao realizar uma operação matemática. Na notação Infix, aquela que normalmente usamos,
+o operador fica entre os operandos (X + Y), enquanto nas notações Infix e Postfix eles ficam antes(+ X Y) ou depois(X Y +), respectivamente.
+Essas notações as quais não estamos acostumados podem ser muito úteis para evitar a utilização de parênteses nas operações. Por exemplo
+a operação (A+B)*C, na notação infix, pode ser escrita sem parênteses nas notação prefix (* C + A B). 
+
+2. Escreva um algoritmo para percorrer completamente da esquerda para direita uma árvore com múltiplos nós.
+
+	if (nó tem filho à esquerda) and (filho à esquerda não lido):
+		nó = filho à esquerda
+		nó é lido
+	else if (nó tem filho à direita) and (filho à direita não lido):
+		nó = filho à direita
+		nó é lido
+	else if (nó tem pai):
+		nó = pai
+	else
+		termina

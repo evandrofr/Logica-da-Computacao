@@ -16,12 +16,14 @@ class Token:
     
     """
     TIPOS DE TOKENS:
-    - INT
-    - PLUS
-    - MINUS
-    - MULT
-    - DIV
-    - EOF (end of file)
+    - INT   (123)
+    - PLUS  ("+")
+    - MINUS ("-")
+    - MULT  ("*")
+    - DIV   ("/")
+    - OP    ("(")
+    - CP    (")")
+    - EOF   (end of file)
     """
     def __init__(self, token_type, token_value):
         self.type = token_type
@@ -77,8 +79,9 @@ class Tokenizer:
         return self.actual
 
 class Parser:
-
-
+    """
+    Função para identificar parênteses e operações unitárias(+ e - como sinais de positivo e negativo) e realiza-la antes das operações básicas (*/+-)
+    """
     def parserFactor():
         resultado = 0
         if Parser.tokenizer.actual.type == 'INT':
