@@ -16,12 +16,14 @@ class Token:
     
     """
     TIPOS DE TOKENS:
-    - INT
-    - PLUS
-    - MINUS
-    - MULT
-    - DIV
-    - EOF (end of file)
+    - INT   (123)
+    - PLUS  ("+")
+    - MINUS ("-")
+    - MULT  ("*")
+    - DIV   ("/")
+    - OP    ("(")
+    - CP    (")")
+    - EOF   (end of file)
     """
     def __init__(self, token_type, token_value):
         self.type = token_type
@@ -56,43 +58,65 @@ class Tokenizer:
             if self.origin[self.position] == '-':
                 self.actual = Token('MINUS', '-')
                 self.position += 1
-            if self.origin[self.position] == '+':
+            elif self.origin[self.position] == '+':
                 self.actual = Token('PLUS', '+')
                 self.position += 1
-            if self.origin[self.position] == '*':
+            elif self.origin[self.position] == '*':
                 self.actual = Token('MULT', '*')
                 self.position += 1
-            if self.origin[self.position] == '/':
+            elif self.origin[self.position] == '/':
                 self.actual = Token('DIV', '/')
                 self.position += 1
+            elif self.origin[self.position] == '(':
+                self.actual = Token('OP', '(')
+                self.position += 1
+            elif self.origin[self.position] == ')':
+                self.actual = Token('CP', ')')
+                self.position += 1
+            else:
+                raise NameError("Token inválido.")
+
         return self.actual
 
 class Parser:
     """
-    Função para procurar por operações de MULT e DIV e realiza-las antes das de PLUS e MINUS.
+    Função para identificar parênteses e operações unitárias(+ e - como sinais de positivo e negativo) e realiza-la antes das operações básicas (*/+-)
     """
-
-
-    def parserTerm():
+    def parserFactor():
+        resultado = 0
         if Parser.tokenizer.actual.type == 'INT':
             resultado = Parser.tokenizer.actual.value
             Parser.tokenizer.selectNext()
-            while Parser.tokenizer.actual.type == 'MULT' or Parser.tokenizer.actual.type == 'DIV':
-                if Parser.tokenizer.actual.type == 'MULT':
-                    Parser.tokenizer.selectNext()
-                    if Parser.tokenizer.actual.type == 'INT':
-                        resultado = resultado * Parser.tokenizer.actual.value
-                    else:
-                        raise ValueError("Erro ao multiplicar")
-                elif Parser.tokenizer.actual.type == 'DIV':
-                    Parser.tokenizer.selectNext()
-                    if Parser.tokenizer.actual.type == 'INT':
-                        resultado = resultado // Parser.tokenizer.actual.value
-                    else:
-                        raise ValueError("Erro ao dividir")
+        elif Parser.tokenizer.actual.type == 'OP':
+            Parser.tokenizer.selectNext()
+            resultado = Parser.parserExpression()
+            if Parser.tokenizer.actual.type == 'CP':
                 Parser.tokenizer.selectNext()
+            else:
+                raise NameError("Erro: parênteses não fechado")
+        elif Parser.tokenizer.actual.type == 'PLUS':
+            Parser.tokenizer.selectNext()
+            resultado = resultado + Parser.parserFactor()
+        elif Parser.tokenizer.actual.type == 'MINUS':
+            Parser.tokenizer.selectNext()
+            resultado = resultado - Parser.parserFactor()
         else:
-            raise NameError('Erro: expressão não iniciada com um número')
+            raise NameError("Token Inválido.")
+
+        return resultado
+    """
+    Função para procurar por operações de MULT e DIV e realiza-las antes das de PLUS e MINUS.
+    """
+    def parserTerm():
+        resultado = Parser.parserFactor()
+        while Parser.tokenizer.actual.type == 'MULT' or Parser.tokenizer.actual.type == 'DIV':
+            if Parser.tokenizer.actual.type == 'MULT':
+                Parser.tokenizer.selectNext()
+                resultado = resultado * Parser.parserFactor()
+
+            elif Parser.tokenizer.actual.type == 'DIV':
+                Parser.tokenizer.selectNext()
+                resultado = resultado // Parser.parserFactor()
 
         return resultado
 
@@ -109,19 +133,14 @@ class Parser:
 
     def parserExpression():
         resultado = Parser.parserTerm()
-        while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS' or Parser.tokenizer.actual.type == 'MULT' or Parser.tokenizer.actual.type == 'DIV':
+        while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS':
             if Parser.tokenizer.actual.type == 'PLUS':
                 Parser.tokenizer.selectNext()
-                if Parser.tokenizer.actual.type == 'INT':
-                    resultado = resultado + Parser.parserTerm()
-                else:
-                    raise NameError('Erro ao somar')
+                resultado = resultado + Parser.parserTerm()
+
             elif Parser.tokenizer.actual.type == 'MINUS':
                 Parser.tokenizer.selectNext()
-                if Parser.tokenizer.actual.type == 'INT':
-                    resultado = resultado - Parser.parserTerm()
-                else:
-                    raise NameError('Erro ao subtrair')
+                resultado = resultado - Parser.parserTerm()
         return resultado
         
     """
