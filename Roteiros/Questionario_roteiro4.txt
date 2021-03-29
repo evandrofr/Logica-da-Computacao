@@ -1,9 +1,9 @@
 Questionário
 1. Montar a árvore de derivação e a AST para: (2 + 3) / ( 5 * 1). Explique por que parênteses não precisa de uma classe Node específica.
-- Os parênteses não precisam de uma classe node específica pois uma nova árvore é construida e resolvida quando um parênteses é encontrado.
-Toda a operação dentro do parênteses entra com um único node IntVal na árvode maior.
-
-
+ - Os parênteses não precisam de uma classe node específica pois uma nova árvore é construída e resolvida quando
+um parêntese é encontrado. Toda a operação dentro dos parênteses entra com uma árvore que quando resolvida vira
+um único node IntVal na árvore maior.
+Imagem na mesma pasta.
 
 2. Proponha uma ideia para implementar variáveis no compilador.
 - A criação de uma classe node parecida com a IntVal, porém ao invés do valor ser um inteiro é a posição na memória em que se encontra o valor.
