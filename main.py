@@ -1,7 +1,5 @@
 import re 
 import node as nd
-# from sys import argv
-
 class PreProc:
     """
     Função criada para eliminar comentários no estilo /* comentário */
@@ -85,14 +83,11 @@ class Parser:
     Função para identificar parênteses e operações unitárias(+ e - como sinais de positivo e negativo) e realiza-la antes das operações básicas (*/+-)
     """
     def parserFactor():
-        # resultado = 0
         if Parser.tokenizer.actual.type == 'INT':
             res = nd.IntVal(Parser.tokenizer.actual.value, [])
-            # resultado = Parser.tokenizer.actual.value
             Parser.tokenizer.selectNext()
         elif Parser.tokenizer.actual.type == 'OP':
             Parser.tokenizer.selectNext()
-            # resultado = Parser.parserExpression()
             res = Parser.parserExpression()
             if Parser.tokenizer.actual.type == 'CP':
                 Parser.tokenizer.selectNext()
@@ -102,37 +97,30 @@ class Parser:
             Parser.tokenizer.selectNext()
             children = [Parser.parserFactor()]
             res = nd.UnOp('+', children)
-            # resultado = resultado + Parser.parserFactor()
         elif Parser.tokenizer.actual.type == 'MINUS':
             Parser.tokenizer.selectNext()
             children = [Parser.parserFactor()]
             res = nd.UnOp('-', children)
-            # resultado = resultado - Parser.parserFactor()
         else:
             raise NameError("Token Inválido.")
 
-        # return resultado
         return res
     """
     Função para procurar por operações de MULT e DIV e realiza-las antes das de PLUS e MINUS.
     """
     def parserTerm():
-        # resultado = Parser.parserFactor()
         res = Parser.parserFactor()
         while Parser.tokenizer.actual.type == 'MULT' or Parser.tokenizer.actual.type == 'DIV':
             if Parser.tokenizer.actual.type == 'MULT':
                 Parser.tokenizer.selectNext()
                 children = [res, Parser.parserFactor()]
                 res = nd.BinOp('*', children)
-                # resultado = resultado * Parser.parserFactor()
 
             elif Parser.tokenizer.actual.type == 'DIV':
                 Parser.tokenizer.selectNext()
                 children = [res, Parser.parserFactor()]
                 res = nd.BinOp('/', children)
-                # resultado = resultado // Parser.parserFactor()
 
-        # return resultado
         return res
 
 
@@ -147,21 +135,17 @@ class Parser:
     """
 
     def parserExpression():
-        # resultado = Parser.parserTerm()
         res = Parser.parserTerm()
         while Parser.tokenizer.actual.type == 'PLUS' or Parser.tokenizer.actual.type == 'MINUS':
             if Parser.tokenizer.actual.type == 'PLUS':
                 Parser.tokenizer.selectNext()
                 children = [res, Parser.parserTerm()]
                 res = nd.BinOp('+', children)
-                # resultado = resultado + Parser.parserTerm()
 
             elif Parser.tokenizer.actual.type == 'MINUS':
                 Parser.tokenizer.selectNext()
                 children = [res, Parser.parserTerm()]
                 res = nd.BinOp('-', children)
-                # resultado = resultado - Parser.parserTerm()
-        # return resultado
         return res
         
     """
@@ -180,7 +164,6 @@ class Parser:
 
 
 if __name__ == "__main__": 
-    # string = argv[1] # Pegar argumentos da chamada do programa
     with open ('entrada.c', 'r') as file:
         entrada = file.read()
     r = Parser.run(entrada)
