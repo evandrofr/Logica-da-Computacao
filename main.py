@@ -1,6 +1,6 @@
 import re 
 import node as nd
-from sys import argv
+# from sys import argv
 
 class PreProc:
     """
@@ -180,6 +180,8 @@ class Parser:
 
 
 if __name__ == "__main__": 
-    string = argv[1] # Pegar argumentos da chamada do programa
-    r = Parser.run(string)
+    # string = argv[1] # Pegar argumentos da chamada do programa
+    with open ('entrada.c', 'r') as file:
+        entrada = file.read()
+    r = Parser.run(entrada)
     print(r.Evaluate())
