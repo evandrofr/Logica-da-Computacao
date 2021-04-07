@@ -1,9 +1,12 @@
 # Lógica da Computação
 Repositório privado para a entrega das atividades da disciplina de Lógica da Computação. 
 
-Para utilizar o compilador basta escrever a operação desejada no arquivo "entrada.c" e utilizar o comando abaixo em seu prompt de comando:<br>
+Para utilizar o compilador basta escrever a operação desejada no arquivo passado como argumento na chamada da função e utilizar o comando abaixo em seu prompt de comando:<br>
 
-`python main.py`
+`python main.py <arquivo>`
+
+Exemplo:<br>
+`python main.py entrada.c`
 
 
 ## Diagrama Sintático

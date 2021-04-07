@@ -1,5 +1,6 @@
 import re 
 import node as nd
+from sys import argv
 class PreProc:
     """
     Função criada para eliminar comentários no estilo /* comentário */
@@ -164,7 +165,8 @@ class Parser:
 
 
 if __name__ == "__main__": 
-    with open ('entrada.c', 'r') as file:
+    string = argv[1] # Pegar argumentos da chamada do programa
+    with open (string, 'r') as file:
         entrada = file.read()
     r = Parser.run(entrada)
     print(r.Evaluate())
