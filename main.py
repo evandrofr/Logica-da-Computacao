@@ -95,27 +95,19 @@ class Parser:
 
     def parserBlock():
         lista_resultado=[]
-        if Parser.tokenizer.actual.type == 'BEGIN':
-            Parser.tokenizer.selectNext()
-            if Parser.tokenizer.actual.type == 'ENTER':
-                Parser.tokenizer.selectNext()
-                while Parser.tokenizer.actual.type != 'END':
-                    lista_resultado.append(Parser.parserCommand())
-                    if Parser.tokenizer.actual.type != 'ENTER':
-                        raise NameError("Erro: não quebrou a linha do Command")
-                    else:
-                        Parser.tokenizer.selectNext()
-
-                return nd.BlockOp("COMMAND", lista_resultado)
-
+        while Parser.tokenizer.actual.type != 'EOF':
+            lista_resultado.append(Parser.parserCommand())
+            if Parser.tokenizer.actual.type != 'ENDC':
+                raise NameError("Erro: ; faltando")
             else:
-                raise NameError("Erro: não quebrou a linha do begin")
-        else:
-            raise NameError("Erro: não abriu BEGIN")
+                Parser.tokenizer.selectNext()
+
+        return nd.BlockOp("COMMAND", lista_resultado)
+
         
     """
     Função utilizada para identificar comandando como atribuição de variaveis e print
-    Utiliza \n para identificar o fim de um comando
+    Utiliza ; para identificar o fim de um comando
     """
 
     def parserCommand():
@@ -123,20 +115,23 @@ class Parser:
             var = Parser.tokenizer.actual.value
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'ASSIG':
-                sinal = Parser.tokenizer.actual.value 
                 Parser.tokenizer.selectNext()
-                res = nd.AssignmentOp(sinal, [var, Parser.parserExpression()])    
+                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserExpression()])    
             else:
                 raise NameError("Erro: sem sinal de recebe (=)")
-        elif Parser.tokenizer.actual.type == 'PRINT':
+        elif Parser.tokenizer.actual.type == 'PRINTLN':
             Parser.tokenizer.selectNext()
-            res = nd.PrintOp("PRINT", [Parser.parserExpression()])
-        elif Parser.tokenizer.actual.type == 'BEGIN':
-            res = Parser.parserBlock()
-            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'OP':
+                Parser.tokenizer.selectNext()
+                val = Parser.parserExpression()
+                if Parser.tokenizer.actual.type == 'CP':
+                    Parser.tokenizer.selectNext()
+                else:
+                    raise NameError("Erro: parênteses não fechado")
+            res = nd.PrintOp("PRINTLN", [val])
 
         else:
-            res = NoOp(0, [])
+            res = nd.NoOp(0, [])
 
         return res
         

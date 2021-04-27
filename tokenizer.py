@@ -1,5 +1,5 @@
-reserved = ["PRINT", "BEGIN", "END"]
-PRINT, BEGIN, END = reserved
+reserved = ["println"]
+PRINTLN = reserved
 
 class Token:
     
@@ -12,10 +12,10 @@ class Token:
     - DIV    ("/")
     - OP     ("(")
     - CP     (")")
-    - ENTER  ("\n")
     - ENDC   (";")
     - ASSIG  ("=")
     - IDENTIFIER - Utilizado na atribuição de variáveis
+    - PRINTLN - Utilizado para PRINT
     - EOF    (end of file)
     """
     def __init__(self, token_type, token_value):
@@ -38,21 +38,14 @@ class Tokenizer:
         temp = []
         word = ""
 
-        while self.position < size and self.origin[self.position].isspace() and self.origin[self.position]!="\n":
-            self.position+=1
+        while self.position < size and self.origin[self.position].isspace() and self.origin[self.position] != "\n":
+            self.position += 1
 
         if self.position == size:
             self.actual = Token("EOF", "end")
             return self.actual
 
-        if self.origin[self.position] == '\n':
-            self.actual = Token("ENTER", "\n")
-            self.position+=1
-
-            return self.actual
-
-
-        while self.position < size and self.origin[self.position].isspace():
+        while self.position < size and self.origin[self.position].isspace() and self.origin[self.position] == "\n":
             self.position += 1
 
         if self.origin[self.position].isdigit():
@@ -101,8 +94,8 @@ class Tokenizer:
                 self.actual = Token("ASSIG", "=")
                 self.position += 1
                 
-            elif self.origin[self.position] == '\n':
-                self.actual = Token('ENTER', '\n')
+            elif self.origin[self.position] == ';':
+                self.actual = Token('ENDC', ';')
                 self.position += 1
 
             else:

@@ -1,6 +1,5 @@
-BEGIN
-a = 3
-b = 4
-PRINT a*b
-PRINT (a+b)/2
-END
+a = 3;
+b = 4;
+c = a + b;
+println(a*b);
+println(c);
