@@ -18,4 +18,6 @@ Exemplo:<br>
 EXPRESSION = TERM, {("+"|"-"), TERM};
 TERM = FACTOR, {("*"|"/"), FACTOR};
 FACTOR = ("+"|"-"), FACTOR | "(", EXPRESSION, ")" | NUM;
+COMMAND = (("IDENTIFIER", "=", EXPRESSION)|("PRINT", EXPRESSION)|BLOCK| lambda);
+BLOCK = "BEGIN", "\n", {COMMAND, "\n"}, "END";
 ```

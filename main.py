@@ -1,6 +1,8 @@
 import re 
 import node as nd
+import tokenizer as tk
 from sys import argv
+
 class PreProc:
     """
     Função criada para eliminar comentários no estilo /* comentário */
@@ -12,72 +14,6 @@ class PreProc:
     def filter_comment(code):
         new_code = re.sub("[/][*]\s*(.*?)\s*[*][/]", "", code)
         return new_code
-
-class Token:
-    
-    """
-    TIPOS DE TOKENS:
-    - INT   (123)
-    - PLUS  ("+")
-    - MINUS ("-")
-    - MULT  ("*")
-    - DIV   ("/")
-    - OP    ("(")
-    - CP    (")")
-    - EOF   (end of file)
-    """
-    def __init__(self, token_type, token_value):
-        self.type = token_type
-        self.value = token_value
-
-class Tokenizer:
-    def __init__(self, origin):
-        self.origin = origin
-        self.position = 0
-        self.actual = self.selectNext()
-
-
-    """
-    Função que identifica Tokens
-    """
-    def selectNext(self):
-        size = len(self.origin)
-        numero = 0
-        temp = []
-        while self.position < size and self.origin[self.position].isspace():
-            self.position += 1
-        if self.position == size:
-            self.actual = Token('EOF', 'end')
-        elif self.origin[self.position].isdigit():
-            while self.position < size and self.origin[self.position].isdigit():
-                temp += [self.origin[self.position]]
-                self.position += 1
-            for idx, alg in enumerate(temp):
-                numero += int(alg)*10**(len(temp) - idx - 1)
-            self.actual = Token('INT', numero)
-        elif self.position < size:
-            if self.origin[self.position] == '-':
-                self.actual = Token('MINUS', '-')
-                self.position += 1
-            elif self.origin[self.position] == '+':
-                self.actual = Token('PLUS', '+')
-                self.position += 1
-            elif self.origin[self.position] == '*':
-                self.actual = Token('MULT', '*')
-                self.position += 1
-            elif self.origin[self.position] == '/':
-                self.actual = Token('DIV', '/')
-                self.position += 1
-            elif self.origin[self.position] == '(':
-                self.actual = Token('OP', '(')
-                self.position += 1
-            elif self.origin[self.position] == ')':
-                self.actual = Token('CP', ')')
-                self.position += 1
-            else:
-                raise NameError("Token inválido.")
-
-        return self.actual
 
 class Parser:
     """
@@ -102,6 +38,10 @@ class Parser:
             Parser.tokenizer.selectNext()
             children = [Parser.parserFactor()]
             res = nd.UnOp('-', children)
+
+        elif Parser.tokenizer.actual.type == 'IDENTIFIER':
+            res = nd.IdentifierOp(Parser.tokenizer.actual.value, [])
+            Parser.tokenizer.selectNext()
         else:
             raise NameError("Token Inválido.")
 
@@ -148,14 +88,68 @@ class Parser:
                 children = [res, Parser.parserTerm()]
                 res = nd.BinOp('-', children)
         return res
+    """
+    Função utilizada para identificar blocos de comandos que se iniciam com a palavra reservada BEGIN
+    e terminando com a palavra reservada END.
+    """
+
+    def parserBlock():
+        lista_resultado=[]
+        if Parser.tokenizer.actual.type == 'BEGIN':
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'ENTER':
+                Parser.tokenizer.selectNext()
+                while Parser.tokenizer.actual.type != 'END':
+                    lista_resultado.append(Parser.parserCommand())
+                    if Parser.tokenizer.actual.type != 'ENTER':
+                        raise NameError("Erro: não quebrou a linha do Command")
+                    else:
+                        Parser.tokenizer.selectNext()
+
+                return nd.BlockOp("COMMAND", lista_resultado)
+
+            else:
+                raise NameError("Erro: não quebrou a linha do begin")
+        else:
+            raise NameError("Erro: não abriu BEGIN")
+        
+    """
+    Função utilizada para identificar comandando como atribuição de variaveis e print
+    Utiliza \n para identificar o fim de um comando
+    """
+
+    def parserCommand():
+        if Parser.tokenizer.actual.type == 'IDENTIFIER':
+            var = Parser.tokenizer.actual.value
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'ASSIG':
+                sinal = Parser.tokenizer.actual.value 
+                Parser.tokenizer.selectNext()
+                res = nd.AssignmentOp(sinal, [var, Parser.parserExpression()])    
+            else:
+                raise NameError("Erro: sem sinal de recebe (=)")
+        elif Parser.tokenizer.actual.type == 'PRINT':
+            Parser.tokenizer.selectNext()
+            res = nd.PrintOp("PRINT", [Parser.parserExpression()])
+        elif Parser.tokenizer.actual.type == 'BEGIN':
+            res = Parser.parserBlock()
+            Parser.tokenizer.selectNext()
+
+        else:
+            res = NoOp(0, [])
+
+        return res
         
     """
     Função que recebe o código que deve ser executado e chama o parserExpression para verifica-lo.
     """
     def run(code):
         new_code = PreProc.filter_comment(code)
-        Parser.tokenizer = Tokenizer(new_code)
-        resultado = Parser.parserExpression()
+        Parser.tokenizer = tk.Tokenizer(new_code)
+        resultado = Parser.parserBlock()
+        Parser.tokenizer.selectNext()
+        while Parser.tokenizer.actual.type == 'ENTER':
+            Parser.tokenizer.selectNext()
         if Parser.tokenizer.actual.type == "EOF":
             return resultado
         else:
@@ -164,9 +158,13 @@ class Parser:
 
 
 
-if __name__ == "__main__": 
-    string = argv[1] # Pegar argumentos da chamada do programa
+if __name__ == "__main__":
+    if (len(argv) == 2):
+        string = argv[1] # Pegar argumentos da chamada do programa
+    else:
+        raise NameError('Erro: o programa recebe um único arquivo .c como argumento')
+    st = nd.SymbolTable()
     with open (string, 'r') as file:
         entrada = file.read()
     r = Parser.run(entrada)
-    print(r.Evaluate())
+    r.Evaluate(st)

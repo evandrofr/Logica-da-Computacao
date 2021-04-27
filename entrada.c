@@ -1,1 +1,6 @@
-/*operação bonita*/ 3*(-2 - 1 )/(2*2-1)/*Saldão casas bahia*/
+BEGIN
+a = 3
+b = 4
+PRINT a*b
+PRINT (a+b)/2
+END
