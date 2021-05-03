@@ -103,7 +103,6 @@ class Parser:
                 Parser.tokenizer.selectNext()
 
         return nd.BlockOp("COMMAND", lista_resultado)
-
         
     """
     Função utilizada para identificar comandando como atribuição de variaveis e print

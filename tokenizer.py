@@ -48,6 +48,10 @@ class Tokenizer:
         while self.position < size and self.origin[self.position].isspace() and self.origin[self.position] == "\n":
             self.position += 1
 
+        if self.position == size:
+            self.actual = Token("EOF", "end")
+            return self.actual
+
         if self.origin[self.position].isdigit():
             while self.position < size and self.origin[self.position].isdigit():
                 temp += [self.origin[self.position]]

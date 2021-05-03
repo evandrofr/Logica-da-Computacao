@@ -20,7 +20,7 @@ No README da versão v2.1.x
 - Node BlockOP:
 	- Valor: "COMMAND"
 	- Filhos: indeterminado. Recebe como filho uma lista retornos do parserCommand.
-	- Ação: Retorna o valor da SymbolTable cuja a chave seja seu valor.
+	- Ação: Chama o método Evaluete de todos os seus filhos.
 
 Questionário
 1. Proponha a implementação da estrutura SE/ENTÃO (if/else).

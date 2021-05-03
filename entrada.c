@@ -1,5 +1,4 @@
-a = 3;
-b = 4;
-c = a + b;
-println(a*b);
-println(c);
+x1 = 3;
+y2 = 4;
+z_final = x1 + y2;
+println(z_final);
