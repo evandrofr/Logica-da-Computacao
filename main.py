@@ -118,7 +118,7 @@ class Parser:
                 res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserExpression()])    
             else:
                 raise NameError("Erro: sem sinal de recebe (=)")
-        elif Parser.tokenizer.actual.type == 'PRINTLN':
+        elif Parser.tokenizer.actual.type == 'println':
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
                 Parser.tokenizer.selectNext()
@@ -127,7 +127,7 @@ class Parser:
                     Parser.tokenizer.selectNext()
                 else:
                     raise NameError("Erro: parênteses não fechado")
-            res = nd.PrintOp("PRINTLN", [val])
+            res = nd.PrintOp("println", [val])
 
         else:
             res = nd.NoOp(0, [])

@@ -15,7 +15,7 @@ class Token:
     - ENDC   (";")
     - ASSIG  ("=")
     - IDENTIFIER - Utilizado na atribuição de variáveis
-    - PRINTLN - Utilizado para PRINT
+    - println - Utilizado para PRINT
     - EOF    (end of file)
     """
     def __init__(self, token_type, token_value):
@@ -38,14 +38,7 @@ class Tokenizer:
         temp = []
         word = ""
 
-        while self.position < size and self.origin[self.position].isspace() and self.origin[self.position] != "\n":
-            self.position += 1
-
-        if self.position == size:
-            self.actual = Token("EOF", "end")
-            return self.actual
-
-        while self.position < size and self.origin[self.position].isspace() and self.origin[self.position] == "\n":
+        while self.position < size and (self.origin[self.position].isspace() or self.origin[self.position] == "\n"):
             self.position += 1
 
         if self.position == size:
@@ -66,13 +59,11 @@ class Tokenizer:
             while self.position < size and (self.origin[self.position].isalpha() or self.origin[self.position].isdigit() or self.origin[self.position]=="_"):
                 word += self.origin[self.position]
                 self.position += 1
-
-            new_word = word.upper()
             
             if word in reserved:
-                self.actual = Token(new_word, new_word)
+                self.actual = Token(word, word)
             else: 
-                self.actual = Token("IDENTIFIER", new_word)
+                self.actual = Token("IDENTIFIER", word)
 
         elif self.position < size:
             if self.origin[self.position] == '-':
