@@ -1,7 +1,7 @@
 # Lógica da Computação
 Repositório privado para a entrega das atividades da disciplina de Lógica da Computação. 
 
-Para utilizar o compilador basta escrever a operação desejada no arquivo passado como argumento na chamada da função e utilizar o comando abaixo em seu prompt de comando:<br>
+Para utilizar o compilador basta escrever o progama no arquivo passado como argumento na chamada da função e utilizar o comando abaixo em seu prompt de comando:<br>
 
 `python main.py <arquivo>`
 
@@ -10,12 +10,20 @@ Exemplo:<br>
 
 
 ## Diagrama Sintático
-<img src="Imagens/diagrama_term_expression.png">
-<img src="Imagens/diagrama_factor.png">
+<img src="Imagens/diagrama_sintatico5_2.png">
+<img src="Imagens/diagrama_sintatico5.png">
 
 ## EBNF
 ```
-EXPRESSION = TERM, {("+"|"-"), TERM};
-TERM = FACTOR, {("*"|"/"), FACTOR};
-FACTOR = ("+"|"-"), FACTOR | "(", EXPRESSION, ")" | NUM;
+BLOCK = { COMMAND } ; 
+COMMAND = ( λ | ASSIGNMENT | PRINT), ";" ; 
+ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ; 
+PRINT = "println", "(", EXPRESSION, ")" ; 
+EXPRESSION = TERM, { ("+" | "-"), TERM } ; 
+TERM = FACTOR, { ("*" | "/"), FACTOR } ; 
+FACTOR = (("+" | "-"), FACTOR) | NUMBER | "(", EXPRESSION, ")" | IDENTIFIER ;
+IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ; 
+NUMBER = DIGIT, { DIGIT } ; 
+LETTER = ( a | ... | z | A | ... | Z ) ; 
+DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
 ```

@@ -1,0 +1,28 @@
+Questionário
+1. Rascunhe o Diagrama Sintático baseado nos novos elementos apresentados em aula.
+No README da versão v2.1.x
+2. Liste e explique como serão os novos elementos da AST (valor, quantos filhos, qual a ação, etc).
+- Node AssignmentOP:
+	- Valor: String "Nome" da variável
+	- Filhos: 2. String "Nome" da variável e Token INT recebido do retorno do parserExpression.
+	- Ação: Salva no dicionário SymbolTable o valor de retorno do parserExpression com a chave igual ao valor passado.
+
+- Node PrintOP:
+	- Valor: "PRINTLN"
+	- Filhos: 1. Token INT recebido do retorno do parserExpression.
+	- Ação: Escreve no terminal o valor de retorno do parserExpression.
+
+- Node IdentifierOP:
+	- Valor: String "Nome" da variável.
+	- Filhos: 0.
+	- Ação: Retorna o valor da SymbolTable cuja a chave seja seu valor.
+
+- Node BlockOP:
+	- Valor: "COMMAND"
+	- Filhos: indeterminado. Recebe como filho uma lista retornos do parserCommand.
+	- Ação: Chama o método Evaluete de todos os seus filhos.
+
+Questionário
+1. Proponha a implementação da estrutura SE/ENTÃO (if/else).
+- Eu implementaria um node que teria como filhos dois blocos e seu valor seria um booleano. O Evaluate dele executaria um dos blocos dependendo do valor do booleano. 
+
