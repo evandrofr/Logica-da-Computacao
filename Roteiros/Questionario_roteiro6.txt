@@ -1,0 +1,67 @@
+Problemas preliminares
+1. Rascunhe as modificações no modelo EBNF e no Diagrama Sintático baseado nos novos elementos.
+
+BLOCK = "{", { COMMAND }, "}" ; 
+COMMAND = ( λ | ASSIGNMENT | PRINT | BLOCK | WHILE | IF), ";" ; 
+WHILE = "while", "(", OREXPR ,")", COMMAND;
+IF = "if", "(", OREXPR ,")", COMMAND, (("else", COMMAND) | λ );
+ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ; 
+PRINT = "println", "(", OREXPR, ")" ; 
+OREXPR = ANDEXPR, { "||", ANDEXPR } ;
+ANDEXPR = EQEXPR, { "&&", EQEXPR } ;
+EQEXPR = RELEXPR, { "==", RELEXPR } ;
+RELEXPR = EXPRESSION, { (">"|"<"),  EXPRESSION }
+EXPRESSION = TERM, { ("+" | "-"), TERM } ; 
+TERM = FACTOR, { ("*" | "/"), FACTOR } ; 
+FACTOR = (("+" | "-" | "!" ), FACTOR) | NUMBER | "(", OREXPR,  ")" | IDENTIFIER | READLN;
+READLN = "readln", "(",")";
+IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ; 
+NUMBER = DIGIT, { DIGIT } ; 
+LETTER = ( a | ... | z | A | ... | Z ) ; 
+DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
+
+Imagem no README do DS.
+
+2. Liste e explique como serão os novos elementos da AST (valor, quantos filhos, qual a ação, etc).
+
+- Node WhileOp
+	- Valor: "while"
+	- Filhos: 2. Node resultante da chama do OREXPR(parserOrExpression) e Node resultante do COMMAND(parserCommand).
+	- Ação: faz a ação presente no segundo node repetidas vezes até que o primeiro node retorne False.
+
+- Node IfOp
+	- Valor: "if"
+	- Filhos: 2 ou 3. Node resultante da chama do OREXPR(parserOrExpression) e 1 ou 2 Nodes resultantes do COMMAND(parserCommand).
+	- Ação: Caso o primeiro node retorne True, faz a ação contida no segundo node. Caso False, faz a do terceiro. Caso o terceiro node não exista e o primeiro seja False, nada será feito.
+
+- Node InputOp
+	- Valor: "readln"
+	- Filhos: nenhum.
+	- Ação: Espera uma entrada pelo usuário e retorna ela como um inteiro.
+
+Base de Testes:
+Proponha um programa de testes, com TODOS os seguintes elementos:
+• While com and/or/not
+• If/Else com and/or/not
+• Leitura do terminal
+Teste utilizado:
+{
+x = readln();
+y = readln();
+z = readln();
+
+if((!(x > 1)  || (y == 0)) && (z > 0)){
+    println(1);
+} else {
+    while(!(1 == 0 || 1 == 2) && (x < 5)) {
+        x = x + 1;
+        y = y + 2;
+    }
+
+}
+
+
+println(x);
+println(y);
+
+}
