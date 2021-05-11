@@ -87,7 +87,7 @@ class Parser:
             res = nd.IdentifierOp(Parser.tokenizer.actual.value, [])
             Parser.tokenizer.selectNext()
         
-        elif Parser.tokenizer.actual.type == 'readln':
+        elif Parser.tokenizer.actual.type == tk.READLN:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
                 Parser.tokenizer.selectNext()
@@ -186,7 +186,7 @@ class Parser:
                 raise NameError("Erro: sem sinal de recebe (=)")
 
 
-        elif Parser.tokenizer.actual.type == 'println':
+        elif Parser.tokenizer.actual.type == tk.PRINTLN:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
                 Parser.tokenizer.selectNext()
@@ -201,7 +201,7 @@ class Parser:
                     raise NameError("Erro: parênteses não fechado")
             res = nd.PrintOp("println", [val])
 
-        elif Parser.tokenizer.actual.type == 'while':
+        elif Parser.tokenizer.actual.type == tk.WHILE:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
                 Parser.tokenizer.selectNext()
@@ -218,7 +218,7 @@ class Parser:
             res = Parser.parserBlock()
             
 
-        elif Parser.tokenizer.actual.type == 'if':
+        elif Parser.tokenizer.actual.type == tk.IF:
             children = []
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
@@ -229,7 +229,8 @@ class Parser:
                     children.append(Parser.parserCommand())
                 else:
                     raise NameError("Erro: parênteses não fechado")
-                if Parser.tokenizer.actual.type == 'else':
+                if Parser.tokenizer.actual.type == tk.ELSE:
+                    Parser.tokenizer.selectNext()
                     children.append(Parser.parserCommand())
             else:
                 raise NameError("Erro: parênteses não aberto")
