@@ -1,5 +1,5 @@
-reserved = ["println"]
-PRINTLN = reserved
+reserved = ["println", "while", "if", "else", "readln"]
+PRINTLN, WHILE, IF, ELSE, READLN = reserved
 
 class Token:
     
@@ -21,8 +21,8 @@ class Token:
     - AND     ("&&")
     - OR      ("||")
     - EQUAL   ("==")
+    - NOT     ("!")
     - IDENTIFIER - Utilizado na atribuição de variáveis
-    - println - Utilizado para PRINT
     - EOF    (end of file)
     """
     def __init__(self, token_type, token_value):
@@ -115,6 +115,10 @@ class Tokenizer:
                 
             elif self.origin[self.position] == ';':
                 self.actual = Token('ENDC', ';')
+                self.position += 1
+
+            elif self.origin[self.position] == '!':
+                self.actual = Token('NOT', '!')
                 self.position += 1
 
             elif self.origin[self.position] == '>':

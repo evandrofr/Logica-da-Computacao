@@ -95,6 +95,8 @@ class Parser:
                     Parser.tokenizer.selectNext()
                 else:
                     raise NameError("Erro: parênteses não fechado")
+            else: 
+                raise NameError("Erro: readln é uma função abra e feche parenteses para chama-la")
             res = nd.InputOp("readln", [])
         else:
             raise NameError("Token Inválido.")
@@ -152,11 +154,9 @@ class Parser:
         if Parser.tokenizer.actual.type == 'OK':
             Parser.tokenizer.selectNext()
             while Parser.tokenizer.actual.type != 'CK':
+                if Parser.tokenizer.actual.type == 'EOF':
+                    raise NameError("Erro: bloco não fechado")
                 lista_resultado.append(Parser.parserCommand())
-                if Parser.tokenizer.actual.type != 'ENDC':
-                    raise NameError("Erro: ; faltando")
-                else:
-                    Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'CK':
                     Parser.tokenizer.selectNext()
             else:
@@ -177,9 +177,15 @@ class Parser:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'ASSIG':
                 Parser.tokenizer.selectNext()
-                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserExpression()])    
+                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserExpression()])
+                if Parser.tokenizer.actual.type != "ENDC":
+                    raise NameError("Erro: falta ; na atribuição de variavel")
+                else:
+                    Parser.tokenizer.selectNext()    
             else:
                 raise NameError("Erro: sem sinal de recebe (=)")
+
+
         elif Parser.tokenizer.actual.type == 'println':
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
@@ -187,6 +193,10 @@ class Parser:
                 val = Parser.parserOrExpression()
                 if Parser.tokenizer.actual.type == 'CP':
                     Parser.tokenizer.selectNext()
+                    if Parser.tokenizer.actual.type != "ENDC":
+                        raise NameError("Erro: falta ; no println")
+                    else:
+                        Parser.tokenizer.selectNext()
                 else:
                     raise NameError("Erro: parênteses não fechado")
             res = nd.PrintOp("println", [val])
@@ -197,11 +207,33 @@ class Parser:
                 Parser.tokenizer.selectNext()
                 val = Parser.parserOrExpression()
                 if Parser.tokenizer.actual.type == 'CP':
+                    Parser.tokenizer.selectNext()
                     res = nd.WhileOp('while', [val,Parser.parserCommand()])
                 else:
                     raise NameError("Erro: parênteses não fechado")
             else:
                 raise NameError("Erro: parênteses não aberto")
+
+        elif Parser.tokenizer.actual.type == "OK":
+            res = Parser.parserBlock()
+            
+
+        elif Parser.tokenizer.actual.type == 'if':
+            children = []
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'OP':
+                Parser.tokenizer.selectNext()
+                children.append(Parser.parserOrExpression())
+                if Parser.tokenizer.actual.type == 'CP':
+                    Parser.tokenizer.selectNext()
+                    children.append(Parser.parserCommand())
+                else:
+                    raise NameError("Erro: parênteses não fechado")
+                if Parser.tokenizer.actual.type == 'else':
+                    children.append(Parser.parserCommand())
+            else:
+                raise NameError("Erro: parênteses não aberto")
+            res = nd.IfOp('if', children)
 
         else:
             res = nd.NoOp(0, [])

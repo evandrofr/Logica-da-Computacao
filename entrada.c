@@ -1,5 +1,11 @@
 {
-x = 4;
-y = 2;
-println(x*y*3);
+x = 2 + readln();
+y = 1;
+if(!(x < 6)){
+    println(x);
+}
+if((x < 6)){
+    println(y);
+}
+
 }
