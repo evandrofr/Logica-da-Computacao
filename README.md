@@ -10,18 +10,25 @@ Exemplo:<br>
 
 
 ## Diagrama Sintático
-<img src="Imagens/diagrama_sintatico5_2.png">
-<img src="Imagens/diagrama_sintatico5.png">
+<img src="Imagens/DS_command.png">
+<img src="Imagens/DS_factor.png">
 
 ## EBNF
 ```
-BLOCK = { COMMAND } ; 
-COMMAND = ( λ | ASSIGNMENT | PRINT), ";" ; 
+BLOCK = "{", { COMMAND }, "}" ; 
+COMMAND = ( λ | ASSIGNMENT | PRINT | BLOCK | WHILE | IF), ";" ; 
+WHILE = "while", "(", OREXPR ,")", COMMAND;
+IF = "if", "(", OREXPR ,")", COMMAND, (("else", COMMAND) | λ );
 ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ; 
-PRINT = "println", "(", EXPRESSION, ")" ; 
+PRINT = "println", "(", OREXPR, ")" ; 
+OREXPR = ANDEXPR, { "||", ANDEXPR } ;
+ANDEXPR = EQEXPR, { "&&", EQEXPR } ;
+EQEXPR = RELEXPR, { "==", RELEXPR } ;
+RELEXPR = EXPRESSION, { (">"|"<"),  EXPRESSION }
 EXPRESSION = TERM, { ("+" | "-"), TERM } ; 
 TERM = FACTOR, { ("*" | "/"), FACTOR } ; 
-FACTOR = (("+" | "-"), FACTOR) | NUMBER | "(", EXPRESSION, ")" | IDENTIFIER ;
+FACTOR = (("+" | "-" | "!" ), FACTOR) | NUMBER | "(", OREXPR,  ")" | IDENTIFIER | READLN;
+READLN = "readln", "(",")";
 IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ; 
 NUMBER = DIGIT, { DIGIT } ; 
 LETTER = ( a | ... | z | A | ... | Z ) ; 
