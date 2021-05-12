@@ -216,6 +216,7 @@ class Parser:
 
         elif Parser.tokenizer.actual.type == "OK":
             res = Parser.parserBlock()
+
             
 
         elif Parser.tokenizer.actual.type == tk.IF:
@@ -236,8 +237,13 @@ class Parser:
                 raise NameError("Erro: parênteses não aberto")
             res = nd.IfOp('if', children)
 
+        elif Parser.tokenizer.actual.type == "ENDC":
+            res = nd.NoOp(0, [])
+            Parser.tokenizer.selectNext()
+
         else:
             res = nd.NoOp(0, [])
+            raise NameError("Erro: Comando inválido")
 
         return res
         

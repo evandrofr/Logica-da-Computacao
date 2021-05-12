@@ -56,6 +56,8 @@ class Tokenizer:
             while self.position < size and self.origin[self.position].isdigit():
                 temp += [self.origin[self.position]]
                 self.position += 1
+            if self.origin[self.position].isalpha():
+                 raise NameError("Token inválido. Números não podem conter letras e variáveis não podem iniciar com números.")
             for idx, alg in enumerate(temp):
                 numero += int(alg)*10**(len(temp) - idx - 1)
             self.actual = Token('INT', numero)
