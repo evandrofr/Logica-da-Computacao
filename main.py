@@ -16,6 +16,46 @@ class PreProc:
         return new_code
 
 class Parser:
+
+    
+
+    def parserOrExpression():
+        res = Parser.parserAndExpression()
+        while Parser.tokenizer.actual.type == 'OR':
+            Parser.tokenizer.selectNext()
+            children = [res, Parser.parserAndExpression()]
+            res = nd.BinOp('||', children)
+        return res
+
+    def parserAndExpression():
+        res = Parser.parserEqExpression()
+        while Parser.tokenizer.actual.type == 'AND':
+            Parser.tokenizer.selectNext()
+            children = [res, Parser.parserEqExpression()]
+            res = nd.BinOp('&&', children)
+        return res
+
+    def parserEqExpression():
+        res = Parser.parserRelExpression()
+        while Parser.tokenizer.actual.type == 'EQUAL':
+            Parser.tokenizer.selectNext()
+            children = [res, Parser.parserRelExpression()]
+            res = nd.BinOp('==', children)
+        return res
+
+    def parserRelExpression():
+        res = Parser.parserExpression()
+        while Parser.tokenizer.actual.type == 'GREATER' or Parser.tokenizer.actual.type == 'LESS':
+            if Parser.tokenizer.actual.type == 'GREATER':
+                Parser.tokenizer.selectNext()
+                children = [res, Parser.parserExpression()]
+                res = nd.BinOp('>', children)
+
+            elif Parser.tokenizer.actual.type == 'LESS':
+                Parser.tokenizer.selectNext()
+                children = [res, Parser.parserExpression()]
+                res = nd.BinOp('<', children)
+        return res
     """
     Função para identificar parênteses e operações unitárias(+ e - como sinais de positivo e negativo) e realiza-la antes das operações básicas (*/+-)
     """
@@ -25,7 +65,7 @@ class Parser:
             Parser.tokenizer.selectNext()
         elif Parser.tokenizer.actual.type == 'OP':
             Parser.tokenizer.selectNext()
-            res = Parser.parserExpression()
+            res = Parser.parserOrExpression()
             if Parser.tokenizer.actual.type == 'CP':
                 Parser.tokenizer.selectNext()
             else:
@@ -38,10 +78,26 @@ class Parser:
             Parser.tokenizer.selectNext()
             children = [Parser.parserFactor()]
             res = nd.UnOp('-', children)
+        elif Parser.tokenizer.actual.type == 'NOT':
+            Parser.tokenizer.selectNext()
+            children = [Parser.parserFactor()]
+            res = nd.UnOp('!', children)
 
         elif Parser.tokenizer.actual.type == 'IDENTIFIER':
             res = nd.IdentifierOp(Parser.tokenizer.actual.value, [])
             Parser.tokenizer.selectNext()
+        
+        elif Parser.tokenizer.actual.type == tk.READLN:
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'OP':
+                Parser.tokenizer.selectNext()
+                if Parser.tokenizer.actual.type == 'CP':
+                    Parser.tokenizer.selectNext()
+                else:
+                    raise NameError("Erro: parênteses não fechado")
+            else: 
+                raise NameError("Erro: readln é uma função abra e feche parenteses para chama-la")
+            res = nd.InputOp("readln", [])
         else:
             raise NameError("Token Inválido.")
 
@@ -95,14 +151,20 @@ class Parser:
 
     def parserBlock():
         lista_resultado=[]
-        while Parser.tokenizer.actual.type != 'EOF':
-            lista_resultado.append(Parser.parserCommand())
-            if Parser.tokenizer.actual.type != 'ENDC':
-                raise NameError("Erro: ; faltando")
+        if Parser.tokenizer.actual.type == 'OK':
+            Parser.tokenizer.selectNext()
+            while Parser.tokenizer.actual.type != 'CK':
+                if Parser.tokenizer.actual.type == 'EOF':
+                    raise NameError("Erro: bloco não fechado")
+                lista_resultado.append(Parser.parserCommand())
+            if Parser.tokenizer.actual.type == 'CK':
+                    Parser.tokenizer.selectNext()
             else:
-                Parser.tokenizer.selectNext()
+                raise NameError("Erro: bloco não fechado")
+        else:
+            raise NameError("Erro: bloco não aberto")
 
-        return nd.BlockOp("COMMAND", lista_resultado)
+        return nd.BlockOp("BLOCK", lista_resultado)
         
     """
     Função utilizada para identificar comandando como atribuição de variaveis e print
@@ -115,22 +177,73 @@ class Parser:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'ASSIG':
                 Parser.tokenizer.selectNext()
-                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserExpression()])    
+                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserOrExpression()])
+                if Parser.tokenizer.actual.type != "ENDC":
+                    raise NameError("Erro: falta ; na atribuição de variavel")
+                else:
+                    Parser.tokenizer.selectNext()    
             else:
                 raise NameError("Erro: sem sinal de recebe (=)")
-        elif Parser.tokenizer.actual.type == 'println':
+
+
+        elif Parser.tokenizer.actual.type == tk.PRINTLN:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'OP':
                 Parser.tokenizer.selectNext()
-                val = Parser.parserExpression()
+                val = Parser.parserOrExpression()
                 if Parser.tokenizer.actual.type == 'CP':
                     Parser.tokenizer.selectNext()
+                    if Parser.tokenizer.actual.type != "ENDC":
+                        raise NameError("Erro: falta ; no println")
+                    else:
+                        Parser.tokenizer.selectNext()
                 else:
                     raise NameError("Erro: parênteses não fechado")
             res = nd.PrintOp("println", [val])
 
+        elif Parser.tokenizer.actual.type == tk.WHILE:
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'OP':
+                Parser.tokenizer.selectNext()
+                val = Parser.parserOrExpression()
+                if Parser.tokenizer.actual.type == 'CP':
+                    Parser.tokenizer.selectNext()
+                    res = nd.WhileOp('while', [val,Parser.parserCommand()])
+                else:
+                    raise NameError("Erro: parênteses não fechado")
+            else:
+                raise NameError("Erro: parênteses não aberto")
+
+        elif Parser.tokenizer.actual.type == "OK":
+            res = Parser.parserBlock()
+
+            
+
+        elif Parser.tokenizer.actual.type == tk.IF:
+            children = []
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type == 'OP':
+                Parser.tokenizer.selectNext()
+                children.append(Parser.parserOrExpression())
+                if Parser.tokenizer.actual.type == 'CP':
+                    Parser.tokenizer.selectNext()
+                    children.append(Parser.parserCommand())
+                else:
+                    raise NameError("Erro: parênteses não fechado")
+                if Parser.tokenizer.actual.type == tk.ELSE:
+                    Parser.tokenizer.selectNext()
+                    children.append(Parser.parserCommand())
+            else:
+                raise NameError("Erro: parênteses não aberto")
+            res = nd.IfOp('if', children)
+
+        elif Parser.tokenizer.actual.type == "ENDC":
+            res = nd.NoOp(0, [])
+            Parser.tokenizer.selectNext()
+
         else:
             res = nd.NoOp(0, [])
+            raise NameError("Erro: Comando inválido")
 
         return res
         

@@ -20,6 +20,16 @@ class BinOp(Node):
             return self.children[0].Evaluate(st) * self.children[1].Evaluate(st)
         elif self.value == '/':
             return self.children[0].Evaluate(st) // self.children[1].Evaluate(st)
+        elif self.value == '>':
+            return self.children[0].Evaluate(st) > self.children[1].Evaluate(st)
+        elif self.value == '<':
+            return self.children[0].Evaluate(st) < self.children[1].Evaluate(st)
+        elif self.value == '==':
+            return self.children[0].Evaluate(st) == self.children[1].Evaluate(st)
+        elif self.value == '||':
+            return self.children[0].Evaluate(st) or self.children[1].Evaluate(st)
+        elif self.value == '&&':
+            return self.children[0].Evaluate(st) and self.children[1].Evaluate(st)
 
 class UnOp(Node):
     def __init__(self, value, children):
@@ -31,6 +41,9 @@ class UnOp(Node):
             return self.children[0].Evaluate(st)
         elif self.value == '-':
             return -self.children[0].Evaluate(st)
+        elif self.value == '!':
+            return not self.children[0].Evaluate(st)
+
 
 class IntVal(Node):
     def __init__(self, value, children):
@@ -39,6 +52,14 @@ class IntVal(Node):
 
     def Evaluate(self, st):
         return self.value
+
+# class BoolVal(Node):
+#     def __init__(self, value, children):
+#         self.value = value
+#         self.children = children
+
+#     def Evaluate(self, st):
+#         return self.value
 
 class NoOp(Node):
     def __init__(self, value, children):
@@ -81,6 +102,33 @@ class BlockOp(Node):
         for node in self.children:
             node.Evaluate(st)
 
+class WhileOp(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
+        while self.children[0].Evaluate(st):
+            self.children[1].Evaluate(st)
+ 
+class IfOp(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
+        if self.children[0].Evaluate(st):
+            self.children[1].Evaluate(st)
+        elif len(self.children) == 3:
+            self.children[2].Evaluate(st)
+
+class InputOp(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
+        return int(input())
 class SymbolTable:
     def __init__(self):
         self.dic_var = {}

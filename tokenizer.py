@@ -1,21 +1,28 @@
-reserved = ["println"]
-PRINTLN = reserved
+reserved = ["println", "while", "if", "else", "readln"]
+PRINTLN, WHILE, IF, ELSE, READLN = reserved
 
 class Token:
     
     """
     TIPOS DE TOKENS:
-    - INT    (123)
-    - PLUS   ("+")
-    - MINUS  ("-")
-    - MULT   ("*")
-    - DIV    ("/")
-    - OP     ("(")
-    - CP     (")")
-    - ENDC   (";")
-    - ASSIG  ("=")
+    - INT     (123)
+    - PLUS    ("+")
+    - MINUS   ("-")
+    - MULT    ("*")
+    - DIV     ("/")
+    - OP      ("(")
+    - CP      (")")
+    - OK      ("{")
+    - CK      ("}")
+    - ENDC    (";")
+    - ASSIG   ("=")
+    - GREATER (">")
+    - LESS    ("<")
+    - AND     ("&&")
+    - OR      ("||")
+    - EQUAL   ("==")
+    - NOT     ("!")
     - IDENTIFIER - Utilizado na atribuição de variáveis
-    - println - Utilizado para PRINT
     - EOF    (end of file)
     """
     def __init__(self, token_type, token_value):
@@ -49,6 +56,8 @@ class Tokenizer:
             while self.position < size and self.origin[self.position].isdigit():
                 temp += [self.origin[self.position]]
                 self.position += 1
+            if self.origin[self.position].isalpha():
+                 raise NameError("Token inválido. Números não podem conter letras e variáveis não podem iniciar com números.")
             for idx, alg in enumerate(temp):
                 numero += int(alg)*10**(len(temp) - idx - 1)
             self.actual = Token('INT', numero)
@@ -69,21 +78,38 @@ class Tokenizer:
             if self.origin[self.position] == '-':
                 self.actual = Token('MINUS', '-')
                 self.position += 1
+
             elif self.origin[self.position] == '+':
                 self.actual = Token('PLUS', '+')
                 self.position += 1
+
             elif self.origin[self.position] == '*':
                 self.actual = Token('MULT', '*')
                 self.position += 1
+
             elif self.origin[self.position] == '/':
                 self.actual = Token('DIV', '/')
                 self.position += 1
+
             elif self.origin[self.position] == '(':
                 self.actual = Token('OP', '(')
                 self.position += 1
+
             elif self.origin[self.position] == ')':
                 self.actual = Token('CP', ')')
                 self.position += 1
+
+            elif self.origin[self.position] == '{':
+                self.actual = Token('OK', '{')
+                self.position += 1
+
+            elif self.origin[self.position] == '}':
+                self.actual = Token('CK', '}')
+                self.position += 1
+
+            elif(self.origin[self.position] == '=' and self.origin[self.position + 1] == "="):
+                self.actual = Token("EQUAL", "==")
+                self.position += 2
             
             elif self.origin[self.position] == '=':
                 self.actual = Token("ASSIG", "=")
@@ -92,6 +118,26 @@ class Tokenizer:
             elif self.origin[self.position] == ';':
                 self.actual = Token('ENDC', ';')
                 self.position += 1
+
+            elif self.origin[self.position] == '!':
+                self.actual = Token('NOT', '!')
+                self.position += 1
+
+            elif self.origin[self.position] == '>':
+                self.actual = Token('GREATER', '>')
+                self.position += 1
+
+            elif self.origin[self.position] == '<':
+                self.actual = Token('LESS', '<')
+                self.position += 1
+
+            elif(self.origin[self.position] == "&" and self.origin[self.position + 1] == "&"):
+                self.actual = Token("AND", "&&")
+                self.position += 2
+
+            elif(self.origin[self.position] == "|" and self.origin[self.position + 1] == "|"):
+                self.actual = Token("OR", "||")
+                self.position += 2
 
             else:
                 raise NameError("Token inválido.")
