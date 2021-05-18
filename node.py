@@ -13,22 +13,19 @@ class BinOp(Node):
 
     def Evaluate(self, st):
         res = 0
-        if (self.children[0].Evaluate(st)[1] == "string"):
+        if (self.children[0].Evaluate(st)[1] == "string" and self.children[1].Evaluate(st)[1] == "string"):
             if(self.value == "=="):
-                return (self.children[0][0] == self.children[1][0], "bool")
-            if (self.children[1][1] == "string"):
-                if(self.value == "+"):
-                    return (self.children[0][0] + self.children[1][0], "string")
-                else:
-                    raise NameError("Operação inválida com String")
-            elif (self.children[1][1] == "int"):
-                if(self.value == "*"):
-                    res = self.children[0][0]
-                    for i in range(0,self.children[1][0]):
-                        res += self.children[0][0]
-                    return (res, "string")
-                else: 
-                    raise NameError("Operação inválida com String")
+                return (self.children[0].Evaluate(st)[0] == self.children[1].Evaluate(st)[0], "bool")
+            elif(self.value == "+"):
+                return (self.children[0].Evaluate(st)[0] + self.children[1].Evaluate(st)[0], "string")
+            # elif (self.children[1][1] == "int"):
+            #     if(self.value == "*"):
+            #         res = self.children[0][0]
+            #         for i in range(0,self.children[1][0]):
+            #             res += self.children[0][0]
+            #         return (res, "string")
+            else: 
+                raise NameError("Operação inválida com String")
         else:
             if self.value == '+':
                 res = self.children[0].Evaluate(st)[0] + self.children[1].Evaluate(st)[0]
@@ -194,6 +191,5 @@ class SymbolTable:
 
     #Funcao para declarar variavel
     def declarator(self, var, tp):
-        # print("Entrei declarator! var: {} e tp: {}".format(var, tp))
         self.dic_var[var] = (None, tp)
 

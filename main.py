@@ -16,9 +16,6 @@ class PreProc:
         return new_code
 
 class Parser:
-
-    
-
     def parserOrExpression():
         res = Parser.parserAndExpression()
         while Parser.tokenizer.actual.type == 'OR':
@@ -63,9 +60,15 @@ class Parser:
         if Parser.tokenizer.actual.type == 'INT':
             res = nd.IntVal(Parser.tokenizer.actual.value, [])
             Parser.tokenizer.selectNext()
+
         elif Parser.tokenizer.actual.type == tk.TRUE or Parser.tokenizer.actual.type == tk.FALSE:
             res = nd.BoolVal(Parser.tokenizer.actual.value, [])
             Parser.tokenizer.selectNext()
+
+        elif Parser.tokenizer.actual.type == 'STR':
+            res = nd.StringVal(Parser.tokenizer.actual.value, [])
+            Parser.tokenizer.selectNext()
+
         elif Parser.tokenizer.actual.type == 'OP':
             Parser.tokenizer.selectNext()
             res = Parser.parserOrExpression()
@@ -182,8 +185,9 @@ class Parser:
             if Parser.tokenizer.actual.type == 'ASSIG':
                 Parser.tokenizer.selectNext()
                 valor = Parser.parserOrExpression()
-                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, valor])
+                res = nd.AssignmentOp(var, [var, valor])
                 if Parser.tokenizer.actual.type != "ENDC":
+                    print(valor.Evaluate(st))
                     raise NameError("Erro: falta ; na atribuição de variavel")
                 else:
                     Parser.tokenizer.selectNext()    
