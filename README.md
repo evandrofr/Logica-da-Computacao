@@ -10,13 +10,14 @@ Exemplo:<br>
 
 
 ## Diagrama Sintático
-<img src="Imagens/DS_command.png">
-<img src="Imagens/DS_factor.png">
+<img src="Imagens/DS.png">
+
 
 ## EBNF
 ```
 BLOCK = "{", { COMMAND }, "}" ; 
-COMMAND = ( λ | ASSIGNMENT | PRINT | BLOCK | WHILE | IF), ";" ; 
+COMMAND = ( λ | ASSIGNMENT | PRINT | BLOCK | WHILE | IF | DECLARATOR), ";" ; 
+DECLARATOR = ("bool" | "int" | "string" ), IDENTIFIER;
 WHILE = "while", "(", OREXPR ,")", COMMAND;
 IF = "if", "(", OREXPR ,")", COMMAND, (("else", COMMAND) | λ );
 ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ; 
@@ -27,10 +28,12 @@ EQEXPR = RELEXPR, { "==", RELEXPR } ;
 RELEXPR = EXPRESSION, { (">"|"<"),  EXPRESSION }
 EXPRESSION = TERM, { ("+" | "-"), TERM } ; 
 TERM = FACTOR, { ("*" | "/"), FACTOR } ; 
-FACTOR = (("+" | "-" | "!" ), FACTOR) | NUMBER | "(", OREXPR,  ")" | IDENTIFIER | READLN;
+FACTOR = (("+" | "-" | "!" ), FACTOR) | NUMBER | BOOL | STRING | "(", OREXPR,  ")" | IDENTIFIER | READLN;
 READLN = "readln", "(",")";
 IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ; 
-NUMBER = DIGIT, { DIGIT } ; 
+NUMBER = DIGIT, { DIGIT } ;
+STRING = '"',{(LETTER | DIGIT)},'"';
+BOOL = "true"|"false";
 LETTER = ( a | ... | z | A | ... | Z ) ; 
 DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
 ```
