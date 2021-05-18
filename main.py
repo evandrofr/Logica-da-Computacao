@@ -63,6 +63,9 @@ class Parser:
         if Parser.tokenizer.actual.type == 'INT':
             res = nd.IntVal(Parser.tokenizer.actual.value, [])
             Parser.tokenizer.selectNext()
+        elif Parser.tokenizer.actual.type == tk.TRUE or Parser.tokenizer.actual.type == tk.FALSE:
+            res = nd.BoolVal(Parser.tokenizer.actual.value, [])
+            Parser.tokenizer.selectNext()
         elif Parser.tokenizer.actual.type == 'OP':
             Parser.tokenizer.selectNext()
             res = Parser.parserOrExpression()
@@ -82,6 +85,7 @@ class Parser:
             Parser.tokenizer.selectNext()
             children = [Parser.parserFactor()]
             res = nd.UnOp('!', children)
+
 
         elif Parser.tokenizer.actual.type == 'IDENTIFIER':
             res = nd.IdentifierOp(Parser.tokenizer.actual.value, [])
@@ -177,13 +181,25 @@ class Parser:
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type == 'ASSIG':
                 Parser.tokenizer.selectNext()
-                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, Parser.parserOrExpression()])
+                valor = Parser.parserOrExpression()
+                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, valor, valor.Evaluate(st)[1]])
                 if Parser.tokenizer.actual.type != "ENDC":
                     raise NameError("Erro: falta ; na atribuição de variavel")
                 else:
                     Parser.tokenizer.selectNext()    
             else:
                 raise NameError("Erro: sem sinal de recebe (=)")
+
+        elif Parser.tokenizer.actual.type == tk.INT or Parser.tokenizer.actual.type == tk.BOOL or Parser.tokenizer.actual.type == tk.STRING:
+            tp = Parser.tokenizer.actual.type
+            Parser.tokenizer.selectNext()
+            var = Parser.tokenizer.actual.value
+            res = nd.AssignmentOp(var, [var, tp])
+            Parser.tokenizer.selectNext()
+            if Parser.tokenizer.actual.type != "ENDC":
+                raise NameError("Erro: falta ; na declaração")
+            else:
+                Parser.tokenizer.selectNext()
 
 
         elif Parser.tokenizer.actual.type == tk.PRINTLN:

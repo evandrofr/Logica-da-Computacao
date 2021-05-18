@@ -1,5 +1,5 @@
-reserved = ["println", "while", "if", "else", "readln"]
-PRINTLN, WHILE, IF, ELSE, READLN = reserved
+reserved = ["println", "while", "if", "else", "readln", "int", "bool", "string", "true", "false"]
+PRINTLN, WHILE, IF, ELSE, READLN, INT, BOOL, STRING, TRUE, FALSE = reserved
 
 class Token:
     
@@ -71,7 +71,7 @@ class Tokenizer:
             
             if word in reserved:
                 self.actual = Token(word, word)
-            else: 
+            else:
                 self.actual = Token("IDENTIFIER", word)
 
         elif self.position < size:
