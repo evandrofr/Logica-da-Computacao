@@ -182,7 +182,7 @@ class Parser:
             if Parser.tokenizer.actual.type == 'ASSIG':
                 Parser.tokenizer.selectNext()
                 valor = Parser.parserOrExpression()
-                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, valor, valor.Evaluate(st)[1]])
+                res = nd.AssignmentOp(Parser.tokenizer.actual.value, [var, valor])
                 if Parser.tokenizer.actual.type != "ENDC":
                     raise NameError("Erro: falta ; na atribuição de variavel")
                 else:

@@ -111,7 +111,7 @@ class AssignmentOp(Node):
 
     def Evaluate(self, st):
         if(self.children[0] in st.dic_var):
-            return st.setter(self.children[0], self.children[1].Evaluate(st), self.children[2])
+            return st.setter(self.children[0], self.children[1].Evaluate(st)[0], self.children[1].Evaluate(st)[1])
         return st.declarator(self.children[0], self.children[1])
 
 class PrintOp(Node):
@@ -179,7 +179,7 @@ class SymbolTable:
 
     def getter(self, var):
         if var in self.dic_var:
-            return self.dic_var[var][0]
+            return self.dic_var[var]
         else:
             raise NameError("Erro: variável não existe")
 

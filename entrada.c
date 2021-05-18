@@ -1,10 +1,14 @@
 {
-int x;
-int y;
-bool a;
-a = true;
-y = 1;
-x = 15;
-println(a && true);
-println(!(x > y));
+    bool loop;
+    int x;
+    x = 0;
+    loop = true;
+    while(loop){
+        x = x + 1;
+        println(x);
+        if(x > 10){
+            loop = false;
+        }
+    }
+
 }
