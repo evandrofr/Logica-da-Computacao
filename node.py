@@ -24,9 +24,8 @@ class BinOp(Node):
             #         for i in range(0,self.children[1][0]):
             #             res += self.children[0][0]
             #         return (res, "string")
-            else: 
-                raise NameError("Operação inválida com String")
-        else:
+            
+        elif(self.children[0].Evaluate(st)[1] != "string" and self.children[1].Evaluate(st)[1] != "string"):
             if self.value == '+':
                 res = self.children[0].Evaluate(st)[0] + self.children[1].Evaluate(st)[0]
             elif self.value == '-':
@@ -48,6 +47,8 @@ class BinOp(Node):
             if(type(res) == bool):
                 return (res, "bool")
             return (res, "int")
+        else: 
+                raise NameError("Operação inválida com String")
 
 class UnOp(Node):
     def __init__(self, value, children):
@@ -169,7 +170,8 @@ class InputOp(Node):
         self.children = children
 
     def Evaluate(self, st):
-        return int(input())
+        res = input()
+        return (res,'string')
 class SymbolTable:
     def __init__(self):
         self.dic_var = {}
