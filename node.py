@@ -57,11 +57,11 @@ class UnOp(Node):
 
     def Evaluate(self, st):
         if self.value == '+':
-            return (self.children[0].Evaluate(st), "int")
+            return (self.children[0].Evaluate(st)[0], "int")
         elif self.value == '-':
-            return (-self.children[0].Evaluate(st), "int")
+            return (-self.children[0].Evaluate(st)[0], "int")
         elif self.value == '!':
-            return (not self.children[0].Evaluate(st), "bool")
+            return (not self.children[0].Evaluate(st)[0], "bool")
 
 
 class IntVal(Node):
