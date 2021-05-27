@@ -198,7 +198,7 @@ class Parser:
             tp = Parser.tokenizer.actual.type
             Parser.tokenizer.selectNext()
             var = Parser.tokenizer.actual.value
-            res = nd.AssignmentOp(var, [var, tp])
+            res = nd.DeclaratorOP(var, [var, tp])
             Parser.tokenizer.selectNext()
             if Parser.tokenizer.actual.type != "ENDC":
                 raise NameError("Erro: falta ; na declaração")

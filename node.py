@@ -41,9 +41,9 @@ class BinOp(Node):
             elif self.value == '==':
                 res = self.children[0].Evaluate(st)[0] == self.children[1].Evaluate(st)[0]
             elif self.value == '||':
-                res = self.children[0].Evaluate(st)[0] or self.children[1].Evaluate(st)[0]
+                res = bool(self.children[0].Evaluate(st)[0]) or bool(self.children[1].Evaluate(st)[0])
             elif self.value == '&&':
-                res = self.children[0].Evaluate(st)[0] and self.children[1].Evaluate(st)[0]
+                res = bool(self.children[0].Evaluate(st)[0]) and bool(self.children[1].Evaluate(st)[0])
             if(type(res) == bool):
                 return (res, "bool")
             return (res, "int")
@@ -72,6 +72,7 @@ class IntVal(Node):
     def Evaluate(self, st):
         return (self.value, "int")
 
+
 class BoolVal(Node):
     def __init__(self, value, children):
         self.value = value
@@ -94,6 +95,7 @@ class StringVal(Node):
         return (self.value, "string")
 
 
+
 class NoOp(Node):
     def __init__(self, value, children):
         self.value = value
@@ -109,8 +111,19 @@ class AssignmentOp(Node):
 
     def Evaluate(self, st):
         if(self.children[0] in st.dic_var):
-            return st.setter(self.children[0], self.children[1].Evaluate(st)[0], self.children[1].Evaluate(st)[1])
+            return st.setter(self.children[0], self.children[1].Evaluate(st)[0])
+        else:
+            raise NameError("Error: Variável não declarada.")
+        
+
+class DeclaratorOP(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
         return st.declarator(self.children[0], self.children[1])
+
 
 class PrintOp(Node):
     def __init__(self, value, children):
@@ -159,6 +172,8 @@ class IfOp(Node):
         self.children = children
 
     def Evaluate(self, st):
+        if self.children[0].Evaluate(st)[1] == 'string':
+            raise NameError("Error: String não é condição.")
         if self.children[0].Evaluate(st)[0]:
             self.children[1].Evaluate(st)
         elif len(self.children) == 3:
@@ -170,8 +185,8 @@ class InputOp(Node):
         self.children = children
 
     def Evaluate(self, st):
-        res = input()
-        return (res,'string')
+        res = int(input())
+        return (res,'int')
 class SymbolTable:
     def __init__(self):
         self.dic_var = {}
@@ -180,14 +195,18 @@ class SymbolTable:
         if var in self.dic_var:
             return self.dic_var[var]
         else:
-            raise NameError("Erro: variável não existe")
+            raise NameError("Erro: variável não existente")
 
-    def setter(self, var, val, tp):
+    def setter(self, var, val): 
         if var in self.dic_var:
-            if self.dic_var[var][1] == tp:
-                self.dic_var[var] = (val, tp)
-            else: 
-                raise NameError("Erro: tipo da variável não condizente")
+            if self.dic_var[var][1] == 'bool':
+                val = bool(val)
+            if self.dic_var[var][1] == 'int':
+                val = int(val)
+            if self.dic_var[var][1] == 'string':
+                val = str(val)
+            self.dic_var[var] = (val, self.dic_var[var][1])
+
         else:
             raise NameError("Erro: variável não declarada")
 
