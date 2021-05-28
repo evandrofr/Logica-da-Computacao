@@ -187,7 +187,6 @@ class Parser:
                 valor = Parser.parserOrExpression()
                 res = nd.AssignmentOp(var, [var, valor])
                 if Parser.tokenizer.actual.type != "ENDC":
-                    print(valor.Evaluate(st))
                     raise NameError("Erro: falta ; na atribuição de variavel")
                 else:
                     Parser.tokenizer.selectNext()    
@@ -293,5 +292,8 @@ if __name__ == "__main__":
     st = nd.SymbolTable()
     with open (string, 'r') as file:
         entrada = file.read()
+    
+    nd.Assembler.initAssembly()
     r = Parser.run(entrada)
     r.Evaluate(st)
+    nd.Assembler.endAssembly()
