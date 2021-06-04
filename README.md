@@ -10,7 +10,10 @@ Exemplo:<br>
 
 
 ## Diagrama Sintático
-<img src="Imagens/DS.png">
+<img src="Imagens/DS_Block.png">
+<img src="Imagens/DS_Command.png">
+<img src="Imagens/DS_Expression.png">
+<img src="Imagens/DS_Factor.png">
 
 
 ## EBNF
