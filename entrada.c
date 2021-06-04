@@ -1,4 +1,5 @@
 {
-1x = 432;
-println(1x);
+    int x;
+    x = readln();
+    println(x);
 }

@@ -1,11 +1,12 @@
-reserved = ["println", "while", "if", "else", "readln"]
-PRINTLN, WHILE, IF, ELSE, READLN = reserved
+reserved = ["println", "while", "if", "else", "readln", "int", "bool", "string", "true", "false"]
+PRINTLN, WHILE, IF, ELSE, READLN, INT, BOOL, STRING, TRUE, FALSE = reserved
 
 class Token:
     
     """
     TIPOS DE TOKENS:
     - INT     (123)
+    - STR     (STR)
     - PLUS    ("+")
     - MINUS   ("-")
     - MULT    ("*")
@@ -62,6 +63,14 @@ class Tokenizer:
                 numero += int(alg)*10**(len(temp) - idx - 1)
             self.actual = Token('INT', numero)
 
+        elif  self.origin[self.position] == '"':
+            self.position += 1
+            while self.position < size and self.origin[self.position] !='"':
+                word += self.origin[self.position]
+                self.position += 1
+            self.position += 1
+            self.actual = Token("STR", word)
+        
         elif self.origin[self.position].isalpha():
             word += self.origin[self.position]
             self.position += 1
@@ -71,7 +80,7 @@ class Tokenizer:
             
             if word in reserved:
                 self.actual = Token(word, word)
-            else: 
+            else:
                 self.actual = Token("IDENTIFIER", word)
 
         elif self.position < size:
@@ -141,5 +150,4 @@ class Tokenizer:
 
             else:
                 raise NameError("Token inválido.")
-
         return self.actual
