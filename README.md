@@ -45,3 +45,4 @@ TYPE = "bool"|"int"|"string";
 ```
 
 ![gitstatus](http://3.129.230.99/svg/evandrofr/Logica-da-Computacao/)
+
