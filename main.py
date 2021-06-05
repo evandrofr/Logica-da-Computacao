@@ -91,8 +91,26 @@ class Parser:
 
 
         elif Parser.tokenizer.actual.type == 'IDENTIFIER':
-            res = nd.IdentifierOp(Parser.tokenizer.actual.value, [])
+            var = Parser.tokenizer.actual.value
             Parser.tokenizer.selectNext()
+             # Chamando funcao
+            if (Parser.tokenizer.actual.type == 'OP'):
+                parm_list = []
+                Parser.tokenizer.selectNext()
+                while (Parser.tokenizer.actual.type != 'CP'):
+                    parm_list.append(Parser.parserOrExpression())
+                    if (Parser.tokenizer.actual.type != 'COMMA' and Parser.tokenizer.actual.type != 'CP'):
+                        raise NameError("Erro: argumento inválido")
+                    if (Parser.tokenizer.actual.type == 'COMMA'):
+                        Parser.tokenizer.selectNext()
+                    if (Parser.tokenizer.actual.type == 'EOF'): 
+                        raise NameError("Erro: parentese não fechado")
+                
+                res = nd.FuncCall(var, parm_list)
+                Parser.tokenizer.selectNext()
+            else:
+                res = nd.IdentifierOp(var, [])
+                # Parser.tokenizer.selectNext()
         
         elif Parser.tokenizer.actual.type == tk.READLN:
             Parser.tokenizer.selectNext()
@@ -327,6 +345,15 @@ class Parser:
             res = nd.NoOp(0, [])
             Parser.tokenizer.selectNext()
 
+        elif Parser.tokenizer.actual.type == tk.RETURN:
+            Parser.tokenizer.selectNext()
+            value = Parser.parserOrExpression()
+            returnNode = nd.ReturnOp("return", [value])
+            res = returnNode
+            if Parser.tokenizer.actual.type != "ENDC":
+                raise NameError("Erro: falta ; no return")
+
+
         else:
             res = nd.NoOp(0, [])
             raise NameError("Erro: Comando inválido")
@@ -346,7 +373,6 @@ class Parser:
         if Parser.tokenizer.actual.type == "EOF":
             return resultado
         else:
-            print(Parser.tokenizer.actual.type)
             raise NameError('Erro: final da operação não encontrado')
 
 

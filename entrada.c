@@ -1,14 +1,26 @@
-int soma(int x){
-    println(x+1);
+int f1(int n){
+    int i;
+    i = 0;
+    while(i < n){
+        println(i);
+        i = i+1;
+    }
 }
 
-int soma2(int x){
-    println(x+2);
+int f2(int x){
+    if(x > 5){
+        return true;
+    } else{
+        return false;
+
+    }
 }
 
 int main() {
     int x;
-    x = 7;
-    soma(x);
-    soma2(x);
+    bool y;
+    x = 6;
+    f1(x);
+    y = f2(x);
+    println(y);
 }

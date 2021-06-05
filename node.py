@@ -231,6 +231,17 @@ class FuncCall(Node):
                 raise NameError("Error: Tipos diferentes")
             table.setter(func.children[0].children[i].value, arg[0])
         func.children[1].Evaluate(table)
+        if("return" in table.dic_var):
+            return table.dic_var["return"]
+
+class ReturnOp(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
+        if("return" not in st.dic_var):
+            st.dic_var["return"] = self.children[0].Evaluate(st)
 
 class SymbolTable:
     def __init__(self):
