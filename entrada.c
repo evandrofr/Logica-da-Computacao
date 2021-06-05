@@ -7,7 +7,7 @@ int f1(int n){
     }
 }
 
-int f2(int x){
+bool f2(int x){
     if(x > 5){
         return true;
     } else{

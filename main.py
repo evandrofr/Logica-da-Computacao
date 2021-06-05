@@ -196,6 +196,8 @@ class Parser:
                                         raise NameError("Erro: argumento inválido")
                                     if (Parser.tokenizer.actual.type == 'COMMA'):
                                         Parser.tokenizer.selectNext()
+                                        if Parser.tokenizer.actual.type != tk.INT and Parser.tokenizer.actual.type != tk.BOOL and Parser.tokenizer.actual.type != tk.STRING:
+                                            raise NameError("Erro: necessário tipo para definir um parametro")
                                     if (Parser.tokenizer.actual.type == 'EOF'): 
                                         raise NameError("Erro: parentese não fechado")
                                 else:
@@ -203,7 +205,7 @@ class Parser:
                             else:
                                 raise NameError("Erro: parametros de funcao dever ter seus tipos especificados")
                         Parser.tokenizer.selectNext()
-                        varDec = nd.VarDec((tp, var), declaretor_list)
+                        varDec = nd.VarDec((var,tp), declaretor_list)
                         block = Parser.parserCommand()
                         funcDec = nd.FuncDec(var, [varDec, block])
                         funcDec_list.append(funcDec)
@@ -212,6 +214,8 @@ class Parser:
 
                 else:
                     raise NameError("Erro: nome de funcao invalido")
+            else:
+                raise NameError("Erro: Função declara sem tipo.")
         funcCall = nd.FuncCall('main', [])
         funcDec_list.append(funcCall)
 
@@ -352,6 +356,9 @@ class Parser:
             res = returnNode
             if Parser.tokenizer.actual.type != "ENDC":
                 raise NameError("Erro: falta ; no return")
+            Parser.tokenizer.selectNext()
+            while(Parser.tokenizer.actual.type != "CK"):
+                Parser.tokenizer.selectNext()
 
 
         else:

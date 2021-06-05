@@ -125,8 +125,10 @@ class DeclaratorOP(Node):
         self.children = children
 
     def Evaluate(self, st):
-        # 0 nome e 1 tipo
-        return st.declarator(self.children[0], self.children[1])
+        if(self.children[0] not in st.dic_var):
+            # 0 nome e 1 tipo
+            return st.declarator(self.children[0], self.children[1])
+        raise NameError("Erro: Variável já declarada")
 
 class VarDec(Node):
     def __init__(self, value, children):
@@ -232,7 +234,10 @@ class FuncCall(Node):
             table.setter(func.children[0].children[i].value, arg[0])
         func.children[1].Evaluate(table)
         if("return" in table.dic_var):
-            return table.dic_var["return"]
+            if(func.children[0].value[1] == table.dic_var["return"][1]):
+                return table.dic_var["return"]
+            else:
+                raise NameError("Erro: Tipo de retorno não é igual ao tipo da funcao")
 
 class ReturnOp(Node):
     def __init__(self, value, children):
