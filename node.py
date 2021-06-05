@@ -1,3 +1,6 @@
+# Dicionário global de funções
+func_table = {}
+
 class Node:
     def __init__(self):
         self.value = None
@@ -122,7 +125,17 @@ class DeclaratorOP(Node):
         self.children = children
 
     def Evaluate(self, st):
+        # 0 nome e 1 tipo
         return st.declarator(self.children[0], self.children[1])
+
+class VarDec(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+    def Evaluate(self, st):
+        for dOP in self.children:
+            dOP.Evaluate(st)
+
 
 
 class PrintOp(Node):
@@ -187,15 +200,53 @@ class InputOp(Node):
     def Evaluate(self, st):
         res = int(input())
         return (res,'int')
+
+class FuncDec(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
+        if(self.value in func_table):
+            raise NameError("Error: Já existe variável ou função com esse nome")
+        # func_table[self.value] = FuncDec(self.value, self.children)
+        func_table[self.value] = self
+
+class FuncCall(Node):
+    def __init__(self, value, children):
+        self.value = value
+        self.children = children
+
+    def Evaluate(self, st):
+        table = SymbolTable()
+        if(self.value not in func_table):
+            raise NameError("Error: Funcao nao declarada")
+        func = func_table[self.value]
+        if (len(func.children[0].children)) != len(self.children):
+            raise NameError("Error: Numero diferente de argumentos")
+        func.children[0].Evaluate(table)
+        for i in range(len(self.children)):
+            arg = self.children[i].Evaluate(st)
+            if(table.dic_var[func.children[0].children[i].value][1] != arg[1]):
+                raise NameError("Error: Tipos diferentes")
+            table.setter(func.children[0].children[i].value, arg[0])
+        func.children[1].Evaluate(table)
+
 class SymbolTable:
     def __init__(self):
         self.dic_var = {}
-
+    
     def getter(self, var):
         if var in self.dic_var:
             return self.dic_var[var]
         else:
             raise NameError("Erro: variável não existente")
+
+    def getter_func(self, var):
+        if var in func_table:
+            return func_table[var]
+        else:
+            raise NameError("Erro: funcao não existente")
 
     def setter(self, var, val): 
         if var in self.dic_var:
@@ -210,7 +261,18 @@ class SymbolTable:
         else:
             raise NameError("Erro: variável não declarada")
 
+    def setter_func(self, var, val): 
+        if var in func_table:
+            func_table[var] = (val, 'FUNCTION')
+
+        else:
+            raise NameError("Erro: Funcao não declarada")
+
     #Funcao para declarar variavel
     def declarator(self, var, tp):
         self.dic_var[var] = (None, tp)
+
+    #Funcao para declarar funcao
+    def declarator_func(self, var):
+        func_table[var] = (None, 'FUNCTION')
 

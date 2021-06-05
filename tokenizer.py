@@ -1,5 +1,5 @@
-reserved = ["println", "while", "if", "else", "readln", "int", "bool", "string", "true", "false"]
-PRINTLN, WHILE, IF, ELSE, READLN, INT, BOOL, STRING, TRUE, FALSE = reserved
+reserved = ["println", "while", "if", "else", "readln", "int", "bool", "string", "true", "false", "return"]
+PRINTLN, WHILE, IF, ELSE, READLN, INT, BOOL, STRING, TRUE, FALSE, RETURN = reserved
 
 class Token:
     
@@ -23,7 +23,9 @@ class Token:
     - OR      ("||")
     - EQUAL   ("==")
     - NOT     ("!")
+    - COMMA   (",")
     - IDENTIFIER - Utilizado na atribuição de variáveis
+    - ALL RESERVED WORDS
     - EOF    (end of file)
     """
     def __init__(self, token_type, token_value):
@@ -147,6 +149,10 @@ class Tokenizer:
             elif(self.origin[self.position] == "|" and self.origin[self.position + 1] == "|"):
                 self.actual = Token("OR", "||")
                 self.position += 2
+            
+            elif self.origin[self.position] == ',':
+                self.actual = Token("COMMA", ",")
+                self.position += 1
 
             else:
                 raise NameError("Token inválido.")

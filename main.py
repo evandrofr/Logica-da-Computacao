@@ -151,6 +151,53 @@ class Parser:
                 children = [res, Parser.parserTerm()]
                 res = nd.BinOp('-', children)
         return res
+
+    def parserFuncDefBlock():
+        funcDec_list = []
+        while Parser.tokenizer.actual.type != 'EOF':
+            if Parser.tokenizer.actual.type == tk.INT or Parser.tokenizer.actual.type == tk.BOOL or Parser.tokenizer.actual.type == tk.STRING:
+                tp = Parser.tokenizer.actual.value
+                Parser.tokenizer.selectNext()
+                if Parser.tokenizer.actual.type == 'IDENTIFIER':
+                    var = Parser.tokenizer.actual.value
+                    Parser.tokenizer.selectNext()
+                    if (Parser.tokenizer.actual.type == 'OP'):
+                        declaretor_list = []
+                        
+                        # Pegar os argumentos
+                        Parser.tokenizer.selectNext()
+                        while (Parser.tokenizer.actual.type != 'CP'):
+                            if Parser.tokenizer.actual.type == tk.INT or Parser.tokenizer.actual.type == tk.BOOL or Parser.tokenizer.actual.type == tk.STRING:
+                                tp_declaretor = Parser.tokenizer.actual.value
+                                Parser.tokenizer.selectNext()
+                                if Parser.tokenizer.actual.type == 'IDENTIFIER':
+                                    var_declaretor = Parser.tokenizer.actual.value
+                                    declaretor_list.append(nd.DeclaratorOP(var_declaretor,[var_declaretor,tp_declaretor]))
+                                    Parser.tokenizer.selectNext()
+                                    if (Parser.tokenizer.actual.type != 'COMMA' and Parser.tokenizer.actual.type != 'CP'):
+                                        raise NameError("Erro: argumento inválido")
+                                    if (Parser.tokenizer.actual.type == 'COMMA'):
+                                        Parser.tokenizer.selectNext()
+                                    if (Parser.tokenizer.actual.type == 'EOF'): 
+                                        raise NameError("Erro: parentese não fechado")
+                                else:
+                                    raise NameError("Erro: Um parametro deve ter um nome válido")
+                            else:
+                                raise NameError("Erro: parametros de funcao dever ter seus tipos especificados")
+                        Parser.tokenizer.selectNext()
+                        varDec = nd.VarDec((tp, var), declaretor_list)
+                        block = Parser.parserCommand()
+                        funcDec = nd.FuncDec(var, [varDec, block])
+                        funcDec_list.append(funcDec)
+                    else:
+                        raise NameError("Erro: funcao deve ser declarada com abre e fecha parenteses")
+
+                else:
+                    raise NameError("Erro: nome de funcao invalido")
+        funcCall = nd.FuncCall('main', [])
+        funcDec_list.append(funcCall)
+
+        return nd.BlockOp("BlockMain", funcDec_list)
     """
     Função utilizada para identificar blocos de comandos que se iniciam com a palavra reservada BEGIN
     e terminando com a palavra reservada END.
@@ -187,10 +234,29 @@ class Parser:
                 valor = Parser.parserOrExpression()
                 res = nd.AssignmentOp(var, [var, valor])
                 if Parser.tokenizer.actual.type != "ENDC":
-                    print(valor.Evaluate(st))
                     raise NameError("Erro: falta ; na atribuição de variavel")
                 else:
-                    Parser.tokenizer.selectNext()    
+                    Parser.tokenizer.selectNext()
+            # Chamando funcao
+            elif (Parser.tokenizer.actual.type == 'OP'):
+                parm_list = []
+                Parser.tokenizer.selectNext()
+                while (Parser.tokenizer.actual.type != 'CP'):
+                    parm_list.append(Parser.parserOrExpression())
+                    if (Parser.tokenizer.actual.type != 'COMMA' and Parser.tokenizer.actual.type != 'CP'):
+                        raise NameError("Erro: argumento inválido")
+                    if (Parser.tokenizer.actual.type == 'COMMA'):
+                        Parser.tokenizer.selectNext()
+                    if (Parser.tokenizer.actual.type == 'EOF'): 
+                        raise NameError("Erro: parentese não fechado")
+                Parser.tokenizer.selectNext()
+                if Parser.tokenizer.actual.type != "ENDC":
+                    raise NameError("Erro: falta ; na atribuição de variavel")
+                else:
+                    Parser.tokenizer.selectNext()
+                res = nd.FuncCall(var, parm_list)
+                    
+                
             else:
                 raise NameError("Erro: sem sinal de recebe (=)")
 
@@ -273,13 +339,14 @@ class Parser:
     def run(code):
         new_code = PreProc.filter_comment(code)
         Parser.tokenizer = tk.Tokenizer(new_code)
-        resultado = Parser.parserBlock()
+        resultado = Parser.parserFuncDefBlock()
         Parser.tokenizer.selectNext()
         while Parser.tokenizer.actual.type == 'ENTER':
             Parser.tokenizer.selectNext()
         if Parser.tokenizer.actual.type == "EOF":
             return resultado
         else:
+            print(Parser.tokenizer.actual.type)
             raise NameError('Erro: final da operação não encontrado')
 
 
