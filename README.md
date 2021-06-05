@@ -43,3 +43,5 @@ LETTER = ( a | ... | z | A | ... | Z ) ;
 DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
 TYPE = "bool"|"int"|"string";
 ```
+
+![gitstatus](http://3.129.230.99/svg/evandrofr/Logica-da-Computacao/)
