@@ -122,7 +122,10 @@ class DeclaratorOP(Node):
         self.children = children
 
     def Evaluate(self, st):
-        return st.declarator(self.children[0], self.children[1])
+        if(self.children[0] not in st.dic_var):
+            # 0 nome e 1 tipo
+            return st.declarator(self.children[0], self.children[1])
+        raise NameError("Erro: Variável já declarada")
 
 
 class PrintOp(Node):

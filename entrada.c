@@ -1,5 +1,7 @@
 {
-    int x;
-    x = readln();
-    println(x);
+    bool x;
+    x = true;
+    if(x){
+        println(1);
+    }
 }
